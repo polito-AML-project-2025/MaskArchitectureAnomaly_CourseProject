@@ -40,6 +40,21 @@ target_transform = Compose(
     ]
 )
 
+def MSP(logits):
+    probs = torch.nn.functional.softmax(logits, dim = 1)
+    anomaly_score = 1 - np.max(probs.squeeze(0).data.cpu().numpy(), axis=0)
+    return anomaly_score
+
+def max_logits_anomaly(logits):
+    anomaly_score = -np.max(logits.squeeze(0).data.cpu().numpy(), axis=0)
+    return anomaly_score
+
+def max_entropy_anomaly(logits):
+    probs = torch.nn.functional.softmax(logits, dim = 1)
+    entropy = torch.div(torch.sum(-probs * torch.log(probs), dim=1), torch.log(torch.tensor(float(probs.shape[1]))))
+    anomaly_score = entropy.squeeze(0).data.cpu().numpy()
+    return anomaly_score
+
 
 def main():
     parser = ArgumentParser()
@@ -58,6 +73,7 @@ def main():
     parser.add_argument('--num-workers', type=int, default=4)
     parser.add_argument('--batch-size', type=int, default=1)
     parser.add_argument('--cpu', action='store_true')
+    parser.add_argument('--anomalyScore', default="msp")
     args = parser.parse_args()
     anomaly_score_list = []
     ood_gts_list = []
@@ -97,10 +113,26 @@ def main():
     for path in glob.glob(os.path.expanduser(str(args.input[0]))):
         print(path)
         images = input_transform((Image.open(path).convert('RGB'))).unsqueeze(0).float().cuda()
-        images = images.permute(0,3,1,2)
+        #print(images.shape)
+        #images = images.permute(0,3,1,2)
         with torch.no_grad():
             result = model(images)
-        anomaly_result = 1.0 - np.max(result.squeeze(0).data.cpu().numpy(), axis=0)            
+        #print(result)
+        #result = torch.nn.functional.softmax(result, dim = 1)
+        #anomaly_result = 1.0 - np.max(result.squeeze(0).data.cpu().numpy(), axis=0)       
+        
+        if(args.anomalyScore == 'msp'):
+            anomaly_result = MSP(result)
+        elif(args.anomalyScore == 'ml'):
+            anomaly_result = max_logits_anomaly(result)
+        elif(args.anomalyScore == 'me'):
+            anomaly_result = max_entropy_anomaly(result)
+        else:
+            print("Error: unknown --anomalyScore value")
+
+        #anomaly_result = max_logits_anomaly(result)
+        
+        #print(anomaly_result.shape)   
         pathGT = path.replace("images", "labels_masks")                
         if "RoadObsticle21" in pathGT:
            pathGT = pathGT.replace("webp", "png")
@@ -156,7 +188,7 @@ def main():
     print(f'AUPRC score: {prc_auc*100.0}')
     print(f'FPR@TPR95: {fpr*100.0}')
 
-    file.write(('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) ))
+    file.write(('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) + '   (' + args.anomalyScore)+')')
     file.close()
 
 if __name__ == '__main__':
