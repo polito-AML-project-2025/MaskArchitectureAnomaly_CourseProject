@@ -12,6 +12,8 @@ from argparse import ArgumentParser
 from ood_metrics import fpr_at_95_tpr, calc_metrics, plot_roc, plot_pr,plot_barcode
 from sklearn.metrics import roc_auc_score, roc_curve, auc, precision_recall_curve, average_precision_score
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 seed = 42
 
@@ -40,8 +42,8 @@ target_transform = Compose(
     ]
 )
 
-def MSP(logits):
-    probs = torch.nn.functional.softmax(logits, dim = 1)
+def MSP(logits, temp = 1):
+    probs = torch.nn.functional.softmax(logits / temp, dim = 1)
     anomaly_score = 1 - np.max(probs.squeeze(0).data.cpu().numpy(), axis=0)
     return anomaly_score
 
@@ -55,6 +57,50 @@ def max_entropy_anomaly(logits):
     anomaly_score = entropy.squeeze(0).data.cpu().numpy()
     return anomaly_score
 
+def logits_to_anomalyscores(logits_list, method, *args, **kwargs):
+    return [method(logits, *args, **kwargs) for logits in logits_list]
+
+def computeMetrics(anomaly_score_list, ood_mask, ind_mask):
+    anomaly_scores = np.array(anomaly_score_list)
+
+    ood_out = anomaly_scores[ood_mask]
+    ind_out = anomaly_scores[ind_mask]
+
+    ood_label = np.ones(len(ood_out))
+    ind_label = np.zeros(len(ind_out))
+        
+    val_out = np.concatenate((ind_out, ood_out))
+    val_label = np.concatenate((ind_label, ood_label))
+
+    prc_auc = average_precision_score(val_label, val_out)
+    fpr = fpr_at_95_tpr(val_out, val_label)
+
+    return (prc_auc, fpr)
+
+def logResults(file, prc_auc, fpr, description, toPrint=True):
+    file.write( "\n")
+    file.write('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) +'   ' +description)
+    if(toPrint):
+        print(description)
+        print(f'AUPRC score: {prc_auc*100.0}')
+        print(f'FPR@TPR95: {fpr*100.0}')
+
+def numpy_range_from_string(input_str):
+    try:
+        parts = input_str.split(',')
+        
+        if len(parts) != 3:
+            raise ValueError("Format must be 'start,end,step'")
+            
+        start, end, step = map(float, parts)
+        
+        if step == 0:
+            raise ValueError("Step cannot be zero")
+            
+        return np.arange(start, end, step).tolist()
+
+    except ValueError as e:
+        raise ValueError(f"Invalid input: {e}")
 
 def main():
     parser = ArgumentParser()
@@ -74,8 +120,9 @@ def main():
     parser.add_argument('--batch-size', type=int, default=1)
     parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--anomalyScore', default="msp")
+    parser.add_argument('--temps', default=None)
     args = parser.parse_args()
-    anomaly_score_list = []
+    logits_list = []
     ood_gts_list = []
 
     if not os.path.exists('results.txt'):
@@ -113,26 +160,10 @@ def main():
     for path in glob.glob(os.path.expanduser(str(args.input[0]))):
         print(path)
         images = input_transform((Image.open(path).convert('RGB'))).unsqueeze(0).float().cuda()
-        #print(images.shape)
         #images = images.permute(0,3,1,2)
         with torch.no_grad():
-            result = model(images)
-        #print(result)
-        #result = torch.nn.functional.softmax(result, dim = 1)
-        #anomaly_result = 1.0 - np.max(result.squeeze(0).data.cpu().numpy(), axis=0)       
-        
-        if(args.anomalyScore == 'msp'):
-            anomaly_result = MSP(result)
-        elif(args.anomalyScore == 'ml'):
-            anomaly_result = max_logits_anomaly(result)
-        elif(args.anomalyScore == 'me'):
-            anomaly_result = max_entropy_anomaly(result)
-        else:
-            print("Error: unknown --anomalyScore value")
+            result = model(images).cpu()
 
-        #anomaly_result = max_logits_anomaly(result)
-        
-        #print(anomaly_result.shape)   
         pathGT = path.replace("images", "labels_masks")                
         if "RoadObsticle21" in pathGT:
            pathGT = pathGT.replace("webp", "png")
@@ -161,34 +192,60 @@ def main():
             continue              
         else:
              ood_gts_list.append(ood_gts)
-             anomaly_score_list.append(anomaly_result)
-        del result, anomaly_result, ood_gts, mask
+             logits_list.append(result)
+        del result, ood_gts, mask
         torch.cuda.empty_cache()
 
-    file.write( "\n")
-
     ood_gts = np.array(ood_gts_list)
-    anomaly_scores = np.array(anomaly_score_list)
 
     ood_mask = (ood_gts == 1)
     ind_mask = (ood_gts == 0)
 
-    ood_out = anomaly_scores[ood_mask]
-    ind_out = anomaly_scores[ind_mask]
+    if(args.anomalyScore == 'msp' and args.temps is not None):
+        temps = numpy_range_from_string(args.temps)
+        prc_aucs = []
+        fprs = []
+        for temp in tqdm(temps):
+            anomaly_score_list = logits_to_anomalyscores(logits_list, MSP, temp=temp)
+            prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
+            prc_aucs.append(prc_auc*100)
+            fprs.append(fpr*100)
+            description = args.anomalyScore + ' temp: '+ f"{temp:.4f}"
+            logResults(file, prc_auc, fpr, '(' + description+')', toPrint=False)
 
-    ood_label = np.ones(len(ood_out))
-    ind_label = np.zeros(len(ind_out))
-    
-    val_out = np.concatenate((ind_out, ood_out))
-    val_label = np.concatenate((ind_label, ood_label))
+        srt_best_auprc = 'best AUPRC: ' + str(max(prc_aucs)) + ' with temperature: ' + f"{temps[np.argmax(prc_aucs)]:.4f}"
+        srt_best_fpr = 'best FPR: ' + str(min(fprs)) + ' with temperature: ' + f"{temps[np.argmin(fprs)]:.4f}"
+        print(srt_best_auprc)
+        print(srt_best_fpr)
+        file.write('\n    ' + srt_best_auprc)
+        file.write('\n    ' + srt_best_fpr)
 
-    prc_auc = average_precision_score(val_label, val_out)
-    fpr = fpr_at_95_tpr(val_out, val_label)
+        plt.plot(temps, prc_aucs)
+        plt.grid(True)
+        plt.xlabel("Temperature")
+        plt.ylabel("AUPRC")
+        plt.show()
+        plt.plot(temps, fprs)
+        plt.grid(True)
+        plt.xlabel("Temperature")
+        plt.ylabel("FPR")
+        plt.show()
+    else:
+        if(args.anomalyScore == 'msp'):
+            description = 'msp temp: 1'
+            anomaly_score_list = logits_to_anomalyscores(logits_list, MSP, temp=1)
+        elif(args.anomalyScore == 'ml'):
+            description = 'ml'
+            anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
+        elif(args.anomalyScore == 'me'):
+            description = 'me'
+            anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
+        else:
+            raise ValueError("Error: unknown --anomalyScore value")
+        prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
+        logResults(file, prc_auc, fpr, '(' + description +')')
 
-    print(f'AUPRC score: {prc_auc*100.0}')
-    print(f'FPR@TPR95: {fpr*100.0}')
-
-    file.write(('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) + '   (' + args.anomalyScore)+')')
+    file.write('\n')
     file.close()
 
 if __name__ == '__main__':
