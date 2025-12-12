@@ -12,6 +12,8 @@ from argparse import ArgumentParser
 from ood_metrics import fpr_at_95_tpr, calc_metrics, plot_roc, plot_pr,plot_barcode
 from sklearn.metrics import roc_auc_score, roc_curve, auc, precision_recall_curve, average_precision_score
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
+import json
+from datetime import datetime
 
 seed = 42
 
@@ -50,6 +52,7 @@ def main():
         help="A list of space separated input images; "
         "or a single glob pattern such as 'directory/*.jpg'",
     )  
+    parser.add_argument('--method', default='MSP', choices=['MSP', 'MaxLogit', 'MaxEntropy'])
     parser.add_argument('--loadDir',default="../trained_models/")
     parser.add_argument('--loadWeights', default="erfnet_pretrained.pth")
     parser.add_argument('--loadModel', default="erfnet.py")
@@ -100,22 +103,56 @@ def main():
         images = images.permute(0,3,1,2)
         with torch.no_grad():
             result = model(images)
-        anomaly_result = 1.0 - np.max(result.squeeze(0).data.cpu().numpy(), axis=0)            
+        
+        # Compute anomaly score based on method
+        # result is logits [1, num_classes, H, W]
+        
+        if args.method == "MSP":
+            # Maximum Softmax Probability
+            probs = torch.nn.functional.softmax(result, dim=1)
+            anomaly_result = 1.0 - np.max(probs.squeeze(0).cpu().numpy(), axis=0)
+            
+        elif args.method == "MaxLogit":
+            # Maximum Logit
+            result_np = result.squeeze(0).cpu().numpy()
+            anomaly_result = -np.max(result_np, axis=0)
+            
+        elif args.method == "MaxEntropy":
+            # Normalized Entropy (normalized by log(num_classes))
+            probs = torch.nn.functional.softmax(result, dim=1)
+            num_classes = probs.shape[1]
+            entropy = torch.div(
+                torch.sum(-probs * torch.log(probs + 1e-10), dim=1),
+                torch.log(torch.tensor(float(num_classes)))
+            )
+            anomaly_result = entropy.squeeze(0).cpu().numpy()
+            
+        else:
+            raise ValueError(f"Unknown method: {args.method}")
+            
         pathGT = path.replace("images", "labels_masks")                
         if "RoadObsticle21" in pathGT:
            pathGT = pathGT.replace("webp", "png")
         if "fs_static" in pathGT:
            pathGT = pathGT.replace("jpg", "png")                
         if "RoadAnomaly" in pathGT:
-           pathGT = pathGT.replace("jpg", "png")  
+           pathGT = pathGT.replace("jpg", "png")
+        if "RoadAnomaly21" in pathGT:
+           pathGT = pathGT.replace("jpg", "png")
+        if "FS_LostFound_full" in pathGT:
+           pathGT = pathGT.replace("png", "png")  # Already PNG
 
         mask = Image.open(pathGT)
         mask = target_transform(mask)
         ood_gts = np.array(mask)
 
-        if "RoadAnomaly" in pathGT:
+        # Handle different dataset label formats
+        if "RoadAnomaly" in pathGT and "RoadAnomaly21" not in pathGT:
             ood_gts = np.where((ood_gts==2), 1, ood_gts)
-        if "LostAndFound" in pathGT:
+        if "RoadAnomaly21" in pathGT:
+            # Assuming same format as RoadAnomaly
+            ood_gts = np.where((ood_gts==2), 1, ood_gts)
+        if "FS_LostFound_full" in pathGT or "LostAndFound" in pathGT:
             ood_gts = np.where((ood_gts==0), 255, ood_gts)
             ood_gts = np.where((ood_gts==1), 0, ood_gts)
             ood_gts = np.where((ood_gts>1)&(ood_gts<201), 1, ood_gts)
@@ -153,11 +190,34 @@ def main():
     prc_auc = average_precision_score(val_label, val_out)
     fpr = fpr_at_95_tpr(val_out, val_label)
 
-    print(f'AUPRC score: {prc_auc*100.0}')
-    print(f'FPR@TPR95: {fpr*100.0}')
+    print(f'\n{"="*60}')
+    print(f'Method: {args.method}')
+    print(f'AUPRC score: {prc_auc*100.0:.2f}%')
+    print(f'FPR@TPR95: {fpr*100.0:.2f}%')
+    print(f'{"="*60}\n')
 
-    file.write(('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) ))
+    file.write(f'\nMethod: {args.method}  |  AUPRC: {prc_auc*100.0:.2f}%  |  FPR@TPR95: {fpr*100.0:.2f}%')
     file.close()
+    
+    # Save to Drive if RESULTS_PATH is available
+    results_path = os.environ.get('RESULTS_PATH')
+    if results_path and os.path.exists(results_path):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        results_dict = {
+            'model': 'ERFNET',
+            'method': args.method,
+            'AUPRC': float(prc_auc * 100.0),
+            'FPR95': float(fpr * 100.0),
+            'timestamp': timestamp
+        }
+        
+        json_filename = f"ERFNET_{args.method}_{timestamp}.json"
+        json_path = os.path.join(results_path, json_filename)
+        
+        with open(json_path, 'w') as f:
+            json.dump(results_dict, f, indent=4)
+        
+        print(f'Results also saved to Drive: {json_path}')
 
 if __name__ == '__main__':
     main()
