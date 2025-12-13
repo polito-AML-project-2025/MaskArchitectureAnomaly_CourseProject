@@ -100,7 +100,7 @@ def main():
     for path in glob.glob(os.path.expanduser(str(args.input[0]))):
         print(path)
         images = input_transform((Image.open(path).convert('RGB'))).unsqueeze(0).float().cuda()
-        images = images.permute(0,3,1,2)
+        # images = images.permute(0,3,1,2)
         with torch.no_grad():
             result = model(images)
         
@@ -137,22 +137,15 @@ def main():
            pathGT = pathGT.replace("jpg", "png")                
         if "RoadAnomaly" in pathGT:
            pathGT = pathGT.replace("jpg", "png")
-        if "RoadAnomaly21" in pathGT:
-           pathGT = pathGT.replace("jpg", "png")
-        if "FS_LostFound_full" in pathGT:
-           pathGT = pathGT.replace("png", "png")  # Already PNG
+
 
         mask = Image.open(pathGT)
         mask = target_transform(mask)
         ood_gts = np.array(mask)
 
-        # Handle different dataset label formats
-        if "RoadAnomaly" in pathGT and "RoadAnomaly21" not in pathGT:
+        if "RoadAnomaly" in pathGT:
             ood_gts = np.where((ood_gts==2), 1, ood_gts)
-        if "RoadAnomaly21" in pathGT:
-            # Assuming same format as RoadAnomaly
-            ood_gts = np.where((ood_gts==2), 1, ood_gts)
-        if "FS_LostFound_full" in pathGT or "LostAndFound" in pathGT:
+        if "LostAndFound" in pathGT:
             ood_gts = np.where((ood_gts==0), 255, ood_gts)
             ood_gts = np.where((ood_gts==1), 0, ood_gts)
             ood_gts = np.where((ood_gts>1)&(ood_gts<201), 1, ood_gts)
@@ -203,15 +196,31 @@ def main():
     results_path = os.environ.get('RESULTS_PATH')
     if results_path and os.path.exists(results_path):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        # Extract dataset name from input path
+        dataset_name = "unknown"
+        input_path = str(args.input[0])
+        if "RoadObsticle21" in input_path:
+            dataset_name = "RoadObsticle21"
+        elif "RoadAnomaly21" in input_path:
+            dataset_name = "RoadAnomaly21"
+        elif "LostFound" in input_path:
+            dataset_name = "LostFound"
+        elif "RoadAnomaly" in input_path:
+            dataset_name = "RoadAnomaly"
+        elif "fs_static" in input_path:
+            dataset_name = "fs_static"
+        
         results_dict = {
             'model': 'ERFNET',
             'method': args.method,
+            'dataset': dataset_name,
             'AUPRC': float(prc_auc * 100.0),
             'FPR95': float(fpr * 100.0),
             'timestamp': timestamp
         }
         
-        json_filename = f"ERFNET_{args.method}_{timestamp}.json"
+        json_filename = f"ERFNET_{args.method}_{dataset_name}_{timestamp}.json"
         json_path = os.path.join(results_path, json_filename)
         
         with open(json_path, 'w') as f:
