@@ -53,7 +53,10 @@ def load_eomt_model(config_path, checkpoint_path, device='cuda'):
     )
     
     # Get image size from config
-    img_size = config["data"]["init_args"]["img_size"]
+    # default to 640 based on config name, or check dataset class
+    img_size = 640
+    if "data" in config and "init_args" in config["data"]:
+        img_size = config["data"]["init_args"].get("img_size", 640)
     
     # Load encoder
     encoder_cfg = config["model"]["init_args"]["network"]["init_args"]["encoder"]
