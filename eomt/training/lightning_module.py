@@ -39,6 +39,7 @@ from training.two_stage_warmup_poly_schedule import TwoStageWarmupPolySchedule
 bold_green = "\033[1;32m"
 reset = "\033[0m"
 
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 class LightningModule(lightning.LightningModule):
     def __init__(
@@ -59,10 +60,34 @@ class LightningModule(lightning.LightningModule):
         ckpt_path=None,
         delta_weights=False,
         load_ckpt_class_head=True,
+
+        lora_enabled: bool = False,
+        lora_r: int = 8,
+        lora_alpha: int = 32,
+        lora_dropout: float = 0.05,
     ):
         super().__init__()
 
-        self.network = network
+        self.save_hyperparameters(ignore=['network'])
+        
+        if lora_enabled:
+            # Target common ViT linear layers (query, key, value, and projection)
+            # DINOv3/ViT usually uses these names. 
+            # If "all-linear" is too broad, use ["qkv", "projection", "fc1", "fc2"]
+            peft_config = LoraConfig(
+                r=lora_r,
+                lora_alpha=lora_alpha,
+                target_modules="all-linear", 
+                lora_dropout=lora_dropout,
+                bias="none",
+                modules_to_save=["class_head", "class_predictor"] # Keep your segmentation heads fully trainable
+            )
+            self.network = get_peft_model(network, peft_config)
+            self.network.print_trainable_parameters()
+        else:
+            self.network = network
+
+        #self.network = network
         self.img_size = img_size
         self.num_classes = num_classes
         self.attn_mask_annealing_enabled = attn_mask_annealing_enabled
