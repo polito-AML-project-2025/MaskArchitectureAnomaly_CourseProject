@@ -13,6 +13,7 @@ import torch.nn.functional as F
 import math
 
 from models.scale_block import ScaleBlock
+from training.isomaxplus import IsoMaxPlusLossFirstPart
 
 
 class EoMT(nn.Module):
@@ -34,7 +35,8 @@ class EoMT(nn.Module):
 
         self.q = nn.Embedding(num_q, self.encoder.backbone.embed_dim)
 
-        self.class_head = nn.Linear(self.encoder.backbone.embed_dim, num_classes + 1)
+        #self.class_head = nn.Linear(self.encoder.backbone.embed_dim, num_classes + 1)
+        self.class_head = IsoMaxPlusLossFirstPart(self.encoder.backbone.embed_dim, num_classes + 1)
 
         self.mask_head = nn.Sequential(
             nn.Linear(self.encoder.backbone.embed_dim, self.encoder.backbone.embed_dim),

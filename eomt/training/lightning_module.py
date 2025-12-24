@@ -68,26 +68,7 @@ class LightningModule(lightning.LightningModule):
     ):
         super().__init__()
 
-        self.save_hyperparameters(ignore=['network'])
-        
-        if lora_enabled:
-            # Target common ViT linear layers (query, key, value, and projection)
-            # DINOv3/ViT usually uses these names. 
-            # If "all-linear" is too broad, use ["qkv", "projection", "fc1", "fc2"]
-            peft_config = LoraConfig(
-                r=lora_r,
-                lora_alpha=lora_alpha,
-                target_modules="all-linear", 
-                lora_dropout=lora_dropout,
-                bias="none",
-                modules_to_save=["class_head", "class_predictor"] # Keep your segmentation heads fully trainable
-            )
-            self.network = get_peft_model(network, peft_config)
-            self.network.print_trainable_parameters()
-        else:
-            self.network = network
-
-        #self.network = network
+        self.network = network
         self.img_size = img_size
         self.num_classes = num_classes
         self.attn_mask_annealing_enabled = attn_mask_annealing_enabled
@@ -102,6 +83,11 @@ class LightningModule(lightning.LightningModule):
         self.llrd_l2_enabled = llrd_l2_enabled
 
         self.strict_loading = False
+
+        self.lora_enabled = lora_enabled
+        self.lora_r = lora_r
+        self.lora_alpha = lora_alpha
+        self.lora_dropout = lora_dropout
 
         if delta_weights and ckpt_path:
             logging.info("Delta weights mode")
@@ -123,7 +109,18 @@ class LightningModule(lightning.LightningModule):
             self._raise_on_incompatible(incompatible_keys, load_ckpt_class_head)
 
         self.log = torch.compiler.disable(self.log)  # type: ignore
-
+    
+        if lora_enabled:
+            peft_config = LoraConfig(
+                r=lora_r,
+                lora_alpha=lora_alpha,
+                lora_dropout=lora_dropout,
+                bias="none",
+                target_modules=["qkv", "proj", "fc1", "fc2"],
+                modules_to_save=["class_head", "mask_head", "upscale", "q"]
+            )
+            self.network = get_peft_model(network, peft_config)
+    '''
     def configure_optimizers(self):
         encoder_param_names = {
             n for n, _ in self.network.encoder.backbone.named_parameters()
@@ -192,7 +189,98 @@ class LightningModule(lightning.LightningModule):
                 "frequency": 1,
             },
         }
+    '''
 
+    def configure_optimizers(self):
+        base_network = self.network.base_model.model if self.lora_enabled else self.network
+        
+        encoder_param_names = {
+            n for n, _ in base_network.encoder.backbone.named_parameters()
+        }
+        backbone_blocks = len(base_network.encoder.backbone.blocks)
+        
+        backbone_param_groups = []
+        other_param_groups = []
+        
+        block_i = backbone_blocks
+        l2_blocks = torch.arange(
+            backbone_blocks - base_network.num_blocks, backbone_blocks
+        ).tolist()
+
+        for name, param in reversed(list(self.named_parameters())):
+            if not param.requires_grad:
+                continue
+
+            lr = self.lr
+
+            clean_name = name.replace("base_model.model.", "").replace("network.", "")
+            
+            clean_name_for_check = clean_name.split(".lora_")[0]
+
+            is_backbone_param = False
+            for enc_name in encoder_param_names:
+                if enc_name in clean_name_for_check:
+                    is_backbone_param = True
+                    break
+            
+            if is_backbone_param:
+                name_list = clean_name.split(".")
+
+                is_block = False
+                for i, key in enumerate(name_list):
+                    if key == "blocks":
+                        try:
+                            block_i = int(name_list[i + 1])
+                            is_block = True
+                        except (ValueError, IndexError):
+                            pass
+
+                if is_block or block_i == 0:
+                    lr *= self.llrd ** (backbone_blocks - 1 - block_i)
+
+                elif (is_block or block_i == 0) and self.lr_mult != 1.0:
+                    lr *= self.lr_mult
+
+                if "backbone.norm" in name:
+                    lr = self.lr
+
+                if (
+                    is_block
+                    and (block_i in l2_blocks)
+                    and ((not self.llrd_l2_enabled) or (self.lr_mult != 1.0))
+                ):
+                    lr = self.lr
+
+                backbone_param_groups.append(
+                    {"params": [param], "lr": lr, "name": name}
+                )
+            else:
+                other_param_groups.append(
+                    {"params": [param], "lr": self.lr, "name": name}
+                )
+
+        param_groups = backbone_param_groups + other_param_groups
+        
+        optimizer = AdamW(param_groups, weight_decay=self.weight_decay)
+
+        scheduler = TwoStageWarmupPolySchedule(
+            optimizer,
+            num_backbone_params=len(backbone_param_groups),
+            warmup_steps=self.warmup_steps,
+            total_steps=self.trainer.estimated_stepping_batches,
+            poly_power=self.poly_power,
+        )
+
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "interval": "step",
+                "frequency": 1,
+            },
+        }
+
+        
     def forward(self, imgs):
         x = imgs / 255.0
 
