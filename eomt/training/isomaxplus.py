@@ -28,7 +28,7 @@ class IsoMaxPlusLossSecondPart(nn.Module):
         super(IsoMaxPlusLossSecondPart, self).__init__()
         self.entropic_scale = entropic_scale
 
-    def forward(self, logits, targets, debug=False):
+    def forward(self, logits, targets, weights=None, debug=False):
         #############################################################################
         #############################################################################
         """Probabilities and logarithms are calculated separately and sequentially"""
@@ -38,7 +38,16 @@ class IsoMaxPlusLossSecondPart(nn.Module):
         distances = -logits
         probabilities_for_training = nn.Softmax(dim=1)(-self.entropic_scale * distances)
         probabilities_at_targets = probabilities_for_training[range(distances.size(0)), targets]
-        loss = -torch.log(probabilities_at_targets).mean()
+        
+        loss = -torch.log(probabilities_at_targets + 1e-9)
+        
+        # 5. Apply Class Weights (CRITICAL FOR MASK2FORMER)
+        if weights is not None:
+            loss = loss * weights
+            return loss.sum() / weights.sum() # Weighted Mean
+        else:
+            return loss.mean()
+
         if not debug:
             return loss
         else:

@@ -126,23 +126,11 @@ class MaskClassificationLossIsomax(Mask2FormerLoss):
     def loss_labels(
         self, class_queries_logits: Tensor, class_labels: list[Tensor], indices: tuple[np.array]
     ) -> dict[str, Tensor]:
-        """Compute the losses related to the labels using cross entropy.
-
-        Args:
-            class_queries_logits (`torch.Tensor`):
-                A tensor of shape `batch_size, num_queries, num_labels`
-            class_labels (`list[torch.Tensor]`):
-                List of class labels of shape `(labels)`.
-            indices (`tuple[np.array])`:
-                The indices computed by the Hungarian matcher.
-
-        Returns:
-            `dict[str, Tensor]`: A dict of `torch.Tensor` containing the following key:
-            - **loss_cross_entropy** -- The loss computed using cross entropy on the predicted and ground truth labels.
-        """
+        
         pred_logits = class_queries_logits
         batch_size, num_queries, _ = pred_logits.shape
-        criterion = IsoMaxPlusLossSecondPart()
+    
+        #criterion = IsoMaxPlusLossSecondPart()
         idx = self._get_predictions_permutation_indices(indices)  # shape of (batch_size, num_queries)
         target_classes_o = torch.cat(
             [target[j] for target, (_, j) in zip(class_labels, indices)]
@@ -151,8 +139,15 @@ class MaskClassificationLossIsomax(Mask2FormerLoss):
             (batch_size, num_queries), fill_value=self.num_labels, dtype=torch.int64, device=pred_logits.device
         )
         target_classes[idx] = target_classes_o
-        # Permute target_classes (batch_size, num_queries, num_labels) -> (batch_size, num_labels, num_queries)
-        pred_logits_transposed = pred_logits.transpose(1, 2)
-        loss_isomax = criterion(pred_logits_transposed, target_classes)
-        losses = {"loss_isomax": loss_isomax}
-        return losses
+        
+        pred_logits_flat = pred_logits.view(-1, self.num_labels + 1) 
+        target_classes_flat = target_classes.view(-1)
+        
+        weights = torch.ones_like(target_classes_flat, dtype=torch.float)
+        weights[target_classes_flat == self.num_labels] = self.eos_coef
+
+        criterion = IsoMaxPlusLossSecondPart()
+        
+        loss = criterion(pred_logits_flat, target_classes_flat, weights=weights)
+
+        return {"loss_isomax": loss}
