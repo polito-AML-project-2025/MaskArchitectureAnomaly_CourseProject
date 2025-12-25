@@ -23,7 +23,7 @@ import torch
 from torch import Tensor, nn
 from training.isomaxplus import IsoMaxPlusLossSecondPart
 
-class MaskClassificationLoss(Mask2FormerLoss):
+class MaskClassificationLossIsomax(Mask2FormerLoss):
     def __init__(
         self,
         num_points: int,
@@ -109,7 +109,7 @@ class MaskClassificationLoss(Mask2FormerLoss):
                 weighted_loss = loss * self.mask_coefficient
             elif "dice" in loss_key:
                 weighted_loss = loss * self.dice_coefficient
-            elif "cross_entropy" in loss_key:
+            elif "loss_isomax" in loss_key:
                 weighted_loss = loss * self.class_coefficient
             else:
                 raise ValueError(f"Unknown loss key: {loss_key}")
@@ -122,3 +122,37 @@ class MaskClassificationLoss(Mask2FormerLoss):
         log_fn("losses/train_loss_total", loss_total, sync_dist=True, prog_bar=True)
 
         return loss_total  # type: ignore
+    
+    def loss_labels(
+        self, class_queries_logits: Tensor, class_labels: list[Tensor], indices: tuple[np.array]
+    ) -> dict[str, Tensor]:
+        """Compute the losses related to the labels using cross entropy.
+
+        Args:
+            class_queries_logits (`torch.Tensor`):
+                A tensor of shape `batch_size, num_queries, num_labels`
+            class_labels (`list[torch.Tensor]`):
+                List of class labels of shape `(labels)`.
+            indices (`tuple[np.array])`:
+                The indices computed by the Hungarian matcher.
+
+        Returns:
+            `dict[str, Tensor]`: A dict of `torch.Tensor` containing the following key:
+            - **loss_cross_entropy** -- The loss computed using cross entropy on the predicted and ground truth labels.
+        """
+        pred_logits = class_queries_logits
+        batch_size, num_queries, _ = pred_logits.shape
+        criterion = IsoMaxPlusLossSecondPart()
+        idx = self._get_predictions_permutation_indices(indices)  # shape of (batch_size, num_queries)
+        target_classes_o = torch.cat(
+            [target[j] for target, (_, j) in zip(class_labels, indices)]
+        )  # shape of (batch_size, num_queries)
+        target_classes = torch.full(
+            (batch_size, num_queries), fill_value=self.num_labels, dtype=torch.int64, device=pred_logits.device
+        )
+        target_classes[idx] = target_classes_o
+        # Permute target_classes (batch_size, num_queries, num_labels) -> (batch_size, num_labels, num_queries)
+        pred_logits_transposed = pred_logits.transpose(1, 2)
+        loss_isomax = criterion(pred_logits_transposed, target_classes)
+        losses = {"loss_isomax": loss_isomax}
+        return losses

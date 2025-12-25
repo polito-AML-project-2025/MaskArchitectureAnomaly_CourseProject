@@ -110,16 +110,47 @@ class LightningModule(lightning.LightningModule):
 
         self.log = torch.compiler.disable(self.log)  # type: ignore
     
-        if lora_enabled:
+        print(len(self.network.encoder.backbone.blocks))
+
+        #for name, module in network.named_modules():
+        #    print(name)
+
+        modules_to_save=["class_head"] #, "mask_head", "upscale", "q"]
+
+        if self.lora_enabled:
+            
+            base_targets = ["qkv", "proj", "fc1", "fc2"]
+            net_len = len(self.network.encoder.backbone.blocks)
+            lora_blocks = range(net_len - self.network.num_blocks, net_len) #all blocks with queries
+            
+            if lora_blocks is not None:
+                target_modules = []
+                for i in lora_blocks:
+                    for target in base_targets:
+                        target_modules.append(f"blocks.{i}.attn.{target}")
+                        target_modules.append(f"blocks.{i}.mlp.{target}")
+            else:
+                target_modules = base_targets
+            
             peft_config = LoraConfig(
                 r=lora_r,
                 lora_alpha=lora_alpha,
                 lora_dropout=lora_dropout,
                 bias="none",
-                target_modules=["qkv", "proj", "fc1", "fc2"],
-                modules_to_save=["class_head", "mask_head", "upscale", "q"]
+                target_modules=target_modules,
+                modules_to_save=modules_to_save #, "mask_head", "upscale", "q"]
             )
             self.network = get_peft_model(network, peft_config)
+
+        if not lora_enabled:
+            for param in self.network.parameters():
+                param.requires_grad = False
+            
+            for name, param in self.network.named_parameters():
+                for module_name in modules_to_save:
+                    if module_name in name:
+                        param.requires_grad = True
+
     '''
     def configure_optimizers(self):
         encoder_param_names = {

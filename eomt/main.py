@@ -151,8 +151,8 @@ class LightningCLI(cli.LightningCLI):
             _should_check_val_fx, self.trainer.fit_loop.epoch_loop
         )
 
-        if not self.config[self.config["subcommand"]]["compile_disabled"]:
-            model = torch.compile(model)
+        #if not self.config[self.config["subcommand"]]["compile_disabled"]:
+        #    model = torch.compile(model)
 
         self.trainer.fit(model, **kwargs)
 
@@ -175,6 +175,11 @@ def cli_main():
             "devices": 1,
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
+
+            #"max_epochs": 10,
+            "limit_train_batches": 1000,
+            "limit_val_batches": 20,
+            "num_sanity_val_steps": 0,
         },
     )
 
