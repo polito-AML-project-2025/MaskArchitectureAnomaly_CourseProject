@@ -180,3 +180,5 @@ cython_debug/
 .pypirc
 
 results.txt
+/eomt
+/lora_weights

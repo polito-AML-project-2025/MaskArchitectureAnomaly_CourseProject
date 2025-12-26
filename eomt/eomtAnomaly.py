@@ -24,6 +24,8 @@ from sklearn.metrics import roc_auc_score, roc_curve, auc, precision_recall_curv
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 from tqdm import tqdm
 
+from peft import LoraConfig, get_peft_model
+
 
 
 seed = 42
@@ -141,6 +143,7 @@ def main():
     parser.add_argument('--anomalyScore', default="msp")
     parser.add_argument('--temps', default=None)
     parser.add_argument('--config', default="configs/dinov2/cityscapes/semantic/eomt_large_1024.yaml")
+    parser.add_argument('--lora_enabled', default=False)
     args = parser.parse_args()
     logits_list = []
     ood_gts_list = []
@@ -184,6 +187,33 @@ def main():
         encoder=encoder,
         **network_kwargs,
     )
+
+    modules_to_save=["class_head", "mask_head", "upscale", "q"]
+
+    if args.lora_enabled:
+        
+        base_targets = ["qkv", "proj", "fc1", "fc2"]
+        net_len = len(network.encoder.backbone.blocks)
+        lora_blocks = range(net_len - network.num_blocks, net_len) #all blocks with queries
+        
+        if lora_blocks is not None:
+            target_modules = []
+            for i in lora_blocks:
+                for target in base_targets:
+                    target_modules.append(f"blocks.{i}.attn.{target}")
+                    target_modules.append(f"blocks.{i}.mlp.{target}")
+        else:
+            target_modules = base_targets
+        
+        peft_config = LoraConfig(
+            r=8,
+            lora_alpha=32,
+            lora_dropout=0.05,
+            bias="none",
+            target_modules=target_modules,
+            modules_to_save=modules_to_save 
+        )
+        network = get_peft_model(network, peft_config)
 
     # Load Lightning module
     lit_module_name, lit_class_name = config["model"]["class_path"].rsplit(".", 1)

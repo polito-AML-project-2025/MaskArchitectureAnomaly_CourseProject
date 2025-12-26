@@ -20,6 +20,8 @@ from lightning.pytorch.loops.fetchers import _DataFetcher, _DataLoaderIterDataFe
 
 from training.lightning_module import LightningModule
 from datasets.lightning_data_module import LightningDataModule
+from lightning.pytorch.callbacks import Callback
+from datetime import datetime
 
 # Suppress PyTorch FX warnings for DINOv3 models
 import os
@@ -156,6 +158,36 @@ class LightningCLI(cli.LightningCLI):
 
         self.trainer.fit(model, **kwargs)
 
+class SaveLoRAWeightsCallback(Callback):
+    def __init__(self, root_dir="lora_weights"):
+        self.root_dir = root_dir
+        self.run_dir = None
+
+    def on_fit_start(self, trainer, pl_module):
+        if self.run_dir is None:
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            self.run_dir = os.path.join(self.root_dir, timestamp)
+
+    def on_train_epoch_end(self, trainer, pl_module):
+
+        if hasattr(pl_module, "hparams") and "lora_enabled" in pl_module.hparams:
+            lora_enabled = pl_module.hparams.lora_enabled
+
+        if not lora_enabled:
+            return
+
+        model = getattr(pl_module, "network", getattr(pl_module, "model", None))
+        if not hasattr(model, "save_pretrained"):
+            return
+        
+        save_path = os.path.join(
+            self.run_dir, 
+            f"epoch-{trainer.current_epoch:02d}"
+        )
+        
+        os.makedirs(save_path, exist_ok=True)
+        model.save_pretrained(save_path)
+
 
 def cli_main():
     LightningCLI(
@@ -168,26 +200,30 @@ def cli_main():
         trainer_defaults={
             "precision": "16-mixed",
             "enable_model_summary": False,
+            "enable_checkpointing": True,
             "callbacks": [
                 ModelSummary(max_depth=3),
                 LearningRateMonitor(logging_interval="epoch"),
+                
+                #ModelCheckpoint(
+                #    filename="eomt-{epoch:02d}-{step}",
+                #    save_top_k=-1,
+                #    every_n_epochs=1,
+                #    #save_last=True,
+                #    #monitor="val_loss",
+                #    #mode="min"
+                #),
+                
 
-                ModelCheckpoint(
-                    filename="eomt-{epoch:02d}-{step}",
-                    save_top_k=-1,
-                    every_n_epochs=1,
-                    #save_last=True,
-                    #monitor="val_loss",
-                    #mode="min"
-                ),
+                SaveLoRAWeightsCallback(),
             ],
             "devices": 1,
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
 
-            #"max_epochs": 10,
-            #"limit_train_batches": 1000,
-            #"limit_val_batches": 200,
+            "max_epochs": 2,
+            "limit_train_batches": 10,
+            "limit_val_batches": 2,
             "num_sanity_val_steps": 0,
         },
     )

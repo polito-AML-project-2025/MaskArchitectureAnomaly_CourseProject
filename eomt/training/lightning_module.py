@@ -39,7 +39,7 @@ from training.two_stage_warmup_poly_schedule import TwoStageWarmupPolySchedule
 bold_green = "\033[1;32m"
 reset = "\033[0m"
 
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model
 
 class LightningModule(lightning.LightningModule):
     def __init__(
@@ -64,7 +64,7 @@ class LightningModule(lightning.LightningModule):
         lora_enabled: bool = False,
         lora_r: int = 8,
         lora_alpha: int = 32,
-        lora_dropout: float = 0.05,
+        lora_dropout: float = 0,
     ):
         super().__init__()
 
@@ -110,12 +110,11 @@ class LightningModule(lightning.LightningModule):
 
         self.log = torch.compiler.disable(self.log)  # type: ignore
     
-        print(len(self.network.encoder.backbone.blocks))
-
+        #print(len(self.network.encoder.backbone.blocks))
         #for name, module in network.named_modules():
         #    print(name)
 
-        modules_to_save=["class_head"] #, "mask_head", "upscale", "q"]
+        modules_to_save=["class_head", "mask_head", "upscale", "q"]
 
         if self.lora_enabled:
             
@@ -138,7 +137,7 @@ class LightningModule(lightning.LightningModule):
                 lora_dropout=lora_dropout,
                 bias="none",
                 target_modules=target_modules,
-                modules_to_save=modules_to_save #, "mask_head", "upscale", "q"]
+                modules_to_save=modules_to_save 
             )
             self.network = get_peft_model(network, peft_config)
 
