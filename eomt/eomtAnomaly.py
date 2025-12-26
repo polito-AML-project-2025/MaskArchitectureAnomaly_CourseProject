@@ -131,7 +131,7 @@ def main():
         "or a single glob pattern such as 'directory/*.jpg'",
     )  
     #parser.add_argument('--loadDir',default="../trained_models/")
-    #parser.add_argument('--loadWeights', default="erfnet_pretrained.pth")
+    parser.add_argument('--loadWeights', default=None)
     #parser.add_argument('--loadModel', default="erfnet.py")
     #parser.add_argument('--subset', default="val")  #can be val or train (must have labels)
     parser.add_argument('--datadir', default="/home/shyam/ViT-Adapter/segmentation/data/cityscapes/")
@@ -140,6 +140,7 @@ def main():
     #parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--anomalyScore', default="msp")
     parser.add_argument('--temps', default=None)
+    parser.add_argument('--config', default="configs/dinov2/cityscapes/semantic/eomt_large_1024.yaml")
     args = parser.parse_args()
     logits_list = []
     ood_gts_list = []
@@ -151,7 +152,7 @@ def main():
 
     #print(torch.cuda.is_available())
     device = 0  # TODO: change to the GPU you want to use
-    config_path = "configs/dinov2/cityscapes/semantic/eomt_large_1024.yaml"  # TODO: change to the config file
+    config_path = args.config  # TODO: change to the config file
 
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
@@ -206,15 +207,13 @@ def main():
     print("Loading weights...")
     
     name = config.get("trainer", {}).get("logger", {}).get("init_args", {}).get("name")
-
+    '''
     if name is None:
         warnings.warn("No logger name found in the config. Please specify a model name.")
     else:
         try:
-            state_dict_path = hf_hub_download(
-                repo_id=f"tue-mps/{name}",
-                filename="pytorch_model.bin",
-            )
+
+            
 
             is_dinov3 = "dinov3" in name
 
@@ -245,6 +244,20 @@ def main():
             warnings.warn(
                 f"Pre-trained model not found for `{name}`. Please load your own checkpoint."
             )
+    '''
+
+    if args.loadWeights is not None:
+        print('loading weights from file')
+        state_dict_path = args.loadWeights
+    else:
+        print('loading weights from huggingface')
+        state_dict_path = hf_hub_download(
+            repo_id=f"tue-mps/{name}",
+            filename="pytorch_model.bin",
+        )
+
+    ckpt = model._load_ckpt(state_dict_path, True)
+    model.load_state_dict(ckpt, strict=False)
 
     #segment
     IGNORE_INDEX = 255
@@ -365,6 +378,8 @@ def main():
         elif(args.anomalyScore == 'ml'):
             description = 'ml'
             anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
+            #plt.imshow(anomaly_score_list[0])
+            #plt.show()
         elif(args.anomalyScore == 'me'):
             description = 'me'
             anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
