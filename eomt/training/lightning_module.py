@@ -114,7 +114,7 @@ class LightningModule(lightning.LightningModule):
         #for name, module in network.named_modules():
         #    print(name)
 
-        modules_to_save=["class_head", "mask_head", "upscale", "q"]
+        modules_to_save=["class_head", "mask_head", "upscale", "q"] #["class_head", "mask_head", "upscale", "q"]
 
         if self.lora_enabled:
             
