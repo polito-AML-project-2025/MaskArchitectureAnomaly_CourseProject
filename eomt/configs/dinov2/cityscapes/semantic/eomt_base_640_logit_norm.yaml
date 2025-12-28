@@ -2,7 +2,7 @@
 # Based on: configs/dinov2/cityscapes/semantic/eomt_base_640.yaml
 
 trainer:
-  # ⭐ RIDOTTO per fine-tuning (originale: 107)
+  # RIDOTTO per fine-tuning (originale: 107)
   max_epochs: 20
   
   # Setup per 1 GPU (Colab)
@@ -14,16 +14,16 @@ trainer:
     init_args:
       resume: allow
       project: "eomt"
-      # ⭐ Nome distintivo per identificare experiment
+      # Nome distintivo per identificare experiment
       name: "cityscapes_semantic_eomt_base_640_logit_norm"
 
 model:
   class_path: training.mask_classification_semantic.MaskClassificationSemantic
   init_args:
-    # ⭐⭐⭐ PARAMETRO CHIAVE: Abilita Logit Normalization ⭐⭐⭐
+    #  PARAMETRO CHIAVE: Abilita Logit Normalization
     use_logit_normalization: True
     
-    # ⭐ IMPORTANTE: Percorso checkpoint pre-trainato per fine-tuning
+    # IMPORTANTE: Percorso checkpoint pre-trainato per fine-tuning
     ckpt_path: "/path/to/pytorch_model.bin"
     load_ckpt_class_head: True  # Carica anche classification head
     
@@ -41,7 +41,7 @@ model:
           init_args:
             backbone_name: vit_base_patch14_reg4_dinov2
     
-    # ⭐⭐⭐ SEZIONE LOSS CON LOGIT NORMALIZATION ⭐⭐⭐
+    #  SEZIONE LOSS CON LOGIT NORMALIZATION 
     loss:
       class_path: training.mask_classification_loss.MaskClassificationLoss
       init_args:
@@ -53,10 +53,10 @@ model:
         class_coefficient: 2.0
         num_labels: 19  # Cityscapes ha 19 classi semantiche
         no_object_coefficient: 0.1
-        # ⭐⭐⭐ NUOVO PARAMETRO - Abilita Logit Normalization ⭐⭐⭐
+        #NUOVO PARAMETRO - Abilita Logit Normalization
         use_logit_normalization: True
     
-    # ⭐ Learning rate ridotto per fine-tuning (10x più piccolo)
+    # Learning rate ridotto per fine-tuning (10x più piccolo)
     optimizer:
       class_path: torch.optim.AdamW
       init_args:
@@ -66,10 +66,10 @@ model:
 data:
   class_path: datasets.cityscapes_semantic.CityscapesSemantic
   init_args:
-    # ⭐ Percorso dataset (modifica secondo tuo setup)
+    # Percorso dataset (modifica secondo tuo setup)
     path: "/path/to/cityscapes"
     
-    # ⭐ Batch size ridotto per Colab (originale: 4 per GPU)
+    #  Batch size ridotto per Colab (originale: 4 per GPU)
     batch_size: 2
     
     # Workers per data loading
