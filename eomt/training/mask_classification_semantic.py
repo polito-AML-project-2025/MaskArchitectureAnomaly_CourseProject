@@ -41,7 +41,6 @@ class MaskClassificationSemantic(LightningModule):
         ckpt_path: Optional[str] = None,
         delta_weights: bool = False,
         load_ckpt_class_head: bool = True,
-        # ⭐⭐⭐ NUOVO PARAMETRO: Abilita Logit Normalization ⭐⭐⭐
         use_logit_normalization: bool = False,
     ):
         super().__init__(
@@ -70,7 +69,7 @@ class MaskClassificationSemantic(LightningModule):
         self.overlap_thresh = overlap_thresh
         self.stuff_classes = range(num_classes)
 
-        # ⭐ Istanzia loss con parametro Logit Normalization
+        # Istanzia loss con parametro Logit Normalization
         self.criterion = MaskClassificationLoss(
             num_points=num_points,
             oversample_ratio=oversample_ratio,
@@ -80,7 +79,6 @@ class MaskClassificationSemantic(LightningModule):
             class_coefficient=class_coefficient,
             num_labels=num_classes,
             no_object_coefficient=no_object_coefficient,
-            # ⭐⭐⭐ Passa parametro Logit Normalization ⭐⭐⭐
             use_logit_normalization=use_logit_normalization,
         )
 
