@@ -30,6 +30,8 @@ class MaskClassificationLoss(Mask2FormerLoss):
         class_coefficient: float,
         num_labels: int,
         no_object_coefficient: float,
+        #  NUOVO PARAMETRO: Abilita Logit Normalization
+        use_logit_normalization: bool = False,
     ):
         nn.Module.__init__(self)
         self.num_points = num_points
@@ -40,6 +42,10 @@ class MaskClassificationLoss(Mask2FormerLoss):
         self.class_coefficient = class_coefficient
         self.num_labels = num_labels
         self.eos_coef = no_object_coefficient
+        
+        #  Salva parametro Logit Normalization
+        self.use_logit_normalization = use_logit_normalization
+        
         empty_weight = torch.ones(self.num_labels + 1)
         empty_weight[-1] = self.eos_coef
         self.register_buffer("empty_weight", empty_weight)
@@ -62,6 +68,17 @@ class MaskClassificationLoss(Mask2FormerLoss):
             target["masks"].to(masks_queries_logits.dtype) for target in targets
         ]
         class_labels = [target["labels"].long() for target in targets]
+
+        #  LOGIT NORMALIZATION: Normalizza i logits delle classi se abilitato
+        if self.use_logit_normalization and class_queries_logits is not None:
+            # Normalizza lungo la dimensione delle classi (ultima dimensione)
+            # Shape: [batch_size, num_queries, num_classes]
+            # L2 normalization: ogni vettore di logits avrà norma L2 = 1
+            class_queries_logits = torch.nn.functional.normalize(
+                class_queries_logits, 
+                p=2,      # L2 norm
+                dim=-1    # Normalizza lungo le classi
+            )
 
         indices = self.matcher(
             masks_queries_logits=masks_queries_logits,

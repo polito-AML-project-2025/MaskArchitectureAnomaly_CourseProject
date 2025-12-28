@@ -1,0 +1,76 @@
+# Configuration for EoMT with Logit Normalization Extension
+# Based on: configs/dinov2/cityscapes/semantic/eomt_base_640.yaml
+
+trainer:
+  # ⭐ RIDOTTO per fine-tuning (originale: 107)
+  max_epochs: 20
+  
+  # Setup per 1 GPU (Colab)
+  devices: 1
+  
+  # Logger W&B (opzionale)
+  logger:
+    class_path: lightning.pytorch.loggers.wandb.WandbLogger
+    init_args:
+      resume: allow
+      project: "eomt"
+      # ⭐ Nome distintivo per identificare experiment
+      name: "cityscapes_semantic_eomt_base_640_logit_norm"
+
+model:
+  class_path: training.mask_classification_semantic.MaskClassificationSemantic
+  init_args:
+    # ⭐⭐⭐ PARAMETRO CHIAVE: Abilita Logit Normalization ⭐⭐⭐
+    use_logit_normalization: True
+    
+    # ⭐ IMPORTANTE: Percorso checkpoint pre-trainato per fine-tuning
+    ckpt_path: "/path/to/pytorch_model.bin"
+    load_ckpt_class_head: True  # Carica anche classification head
+    
+    attn_mask_annealing_enabled: True
+    attn_mask_annealing_start_steps: [3317, 8292, 13268]
+    attn_mask_annealing_end_steps: [6634, 11609, 16585]
+    
+    network:
+      class_path: models.eomt.EoMT
+      init_args:
+        num_q: 100
+        num_blocks: 3
+        encoder:
+          class_path: models.vit.ViT
+          init_args:
+            backbone_name: vit_base_patch14_reg4_dinov2
+    
+    # ⭐⭐⭐ SEZIONE LOSS CON LOGIT NORMALIZATION ⭐⭐⭐
+    loss:
+      class_path: training.mask_classification_loss.MaskClassificationLoss
+      init_args:
+        num_points: 12544
+        oversample_ratio: 3.0
+        importance_sample_ratio: 0.75
+        mask_coefficient: 5.0
+        dice_coefficient: 5.0
+        class_coefficient: 2.0
+        num_labels: 19  # Cityscapes ha 19 classi semantiche
+        no_object_coefficient: 0.1
+        # ⭐⭐⭐ NUOVO PARAMETRO - Abilita Logit Normalization ⭐⭐⭐
+        use_logit_normalization: True
+    
+    # ⭐ Learning rate ridotto per fine-tuning (10x più piccolo)
+    optimizer:
+      class_path: torch.optim.AdamW
+      init_args:
+        lr: 0.00001  # Originale: 0.0001
+        weight_decay: 0.05
+
+data:
+  class_path: datasets.cityscapes_semantic.CityscapesSemantic
+  init_args:
+    # ⭐ Percorso dataset (modifica secondo tuo setup)
+    path: "/path/to/cityscapes"
+    
+    # ⭐ Batch size ridotto per Colab (originale: 4 per GPU)
+    batch_size: 2
+    
+    # Workers per data loading
+    num_workers: 4
