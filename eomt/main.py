@@ -245,9 +245,9 @@ def cli_main():
                 
                 ModelCheckpoint(
                     filename="eomt-{epoch:02d}-{step}",
-                    save_top_k=-1,
-                    every_n_epochs=1,
-                    #save_last=True,
+                    #save_top_k=-1,
+                    #every_n_epochs=1,
+                    save_last=True,
                     #monitor="val_loss",
                     #mode="min"
                 ),
@@ -261,8 +261,8 @@ def cli_main():
             "gradient_clip_algorithm": "norm",
 
             #"max_epochs": 1,
-            #"limit_train_batches": 1000,
-            "limit_val_batches": 200,
+            #"limit_train_batches": 100,
+            #"limit_val_batches": 200,
             "num_sanity_val_steps": 0,
         },
     )

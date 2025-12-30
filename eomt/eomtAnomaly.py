@@ -145,8 +145,7 @@ def main():
     parser.add_argument('--config', default="configs/dinov2/cityscapes/semantic/eomt_large_1024.yaml")
     parser.add_argument('--lora_weights', default=None)
     args = parser.parse_args()
-    logits_list = []
-    ood_gts_list = []
+    
 
     if not os.path.exists('results.txt'):
         open('results.txt', 'w').close()
@@ -211,44 +210,6 @@ def main():
     print("Loading weights...")
     
     name = config.get("trainer", {}).get("logger", {}).get("init_args", {}).get("name")
-    '''
-    if name is None:
-        warnings.warn("No logger name found in the config. Please specify a model name.")
-    else:
-        try:
-
-            
-
-            is_dinov3 = "dinov3" in name
-
-            if is_dinov3:
-                model_kwargs["ckpt_path"] = state_dict_path
-                model_kwargs["delta_weights"] = True
-
-            model = (
-                lit_cls(
-                    img_size=data.img_size,
-                    num_classes=data.num_classes,
-                    network=network,
-                    **model_kwargs,
-                )
-                .eval()
-                .to(device)
-            )
-
-            if not is_dinov3:
-                state_dict = torch.load(
-                    state_dict_path, map_location=f"cuda:{device}", weights_only=True
-                )
-                model.load_state_dict(state_dict, strict=False)
-            
-            print ("Model and weights LOADED successfully")
-
-        except RepositoryNotFoundError:
-            warnings.warn(
-                f"Pre-trained model not found for `{name}`. Please load your own checkpoint."
-            )
-    '''
 
     if args.loadWeights is not None:
         print('loading weights from file')
@@ -306,6 +267,9 @@ def main():
 
         plt.tight_layout()
         plt.show()
+
+    logits_list = []
+    ood_gts_list = []
 
     for path in glob.glob(os.path.expanduser(str(args.input[0]))):
         print(path)
@@ -393,13 +357,16 @@ def main():
         elif(args.anomalyScore == 'rba'):
             description = 'rba'
             anomaly_score_list = logits_to_anomalyscores(logits_list, rba_anomaly)
-            for i in range(5):
-                plt.imshow(anomaly_score_list[i])
-                plt.show()
         else:
             raise ValueError("Error: unknown --anomalyScore value")
         prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
         logResults(file, prc_auc, fpr, '(' + description +')')
+        
+        '''
+        for i in range(5):
+            plt.imshow(anomaly_score_list[i])
+            plt.show()
+        '''
 
     file.write('\n')
     file.close()

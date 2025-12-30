@@ -39,8 +39,7 @@ from training.two_stage_warmup_poly_schedule import TwoStageWarmupPolySchedule
 bold_green = "\033[1;32m"
 reset = "\033[0m"
 
-from peft import LoraConfig, get_peft_model
-import time
+from peft import LoraConfig, get_peft_model, PeftModel
 
 class LightningModule(lightning.LightningModule):
     def __init__(
@@ -63,6 +62,7 @@ class LightningModule(lightning.LightningModule):
         load_ckpt_class_head=True,
 
         lora_enabled: bool = False,
+        lora_weights_path=None,
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0,
@@ -118,31 +118,34 @@ class LightningModule(lightning.LightningModule):
         modules_to_save=["class_head", "mask_head"]#, "q"]
 
         if self.lora_enabled:
-            
-            base_targets = ["qkv", "proj", "fc1", "fc2"]
-            net_len = len(self.network.encoder.backbone.blocks)
-            lora_blocks = range(net_len - self.network.num_blocks, net_len) #all blocks with queries
-            
-            if lora_blocks is not None:
-                target_modules = []
-                for i in lora_blocks:
-                    for target in base_targets:
-                        target_modules.append(f"blocks.{i}.attn.{target}")
-                        target_modules.append(f"blocks.{i}.mlp.{target}")
+            if lora_weights_path is not None:
+                print('load lora weights')
+                self.network = PeftModel.from_pretrained(self.network, lora_weights_path)
             else:
-                target_modules = base_targets
-            
-            peft_config = LoraConfig(
-                r=lora_r,
-                lora_alpha=lora_alpha,
-                lora_dropout=lora_dropout,
-                bias="none",
-                target_modules=target_modules,
-                modules_to_save=modules_to_save 
-            )
-            self.network = get_peft_model(network, peft_config)
+                base_targets = ["qkv", "proj", "fc1", "fc2"]
+                net_len = len(self.network.encoder.backbone.blocks)
+                lora_blocks = range(net_len - self.network.num_blocks, net_len) #all blocks with queries
+                
+                if lora_blocks is not None:
+                    target_modules = []
+                    for i in lora_blocks:
+                        for target in base_targets:
+                            target_modules.append(f"blocks.{i}.attn.{target}")
+                            target_modules.append(f"blocks.{i}.mlp.{target}")
+                else:
+                    target_modules = base_targets
+                
+                peft_config = LoraConfig(
+                    r=lora_r,
+                    lora_alpha=lora_alpha,
+                    lora_dropout=lora_dropout,
+                    bias="none",
+                    target_modules=target_modules,
+                    modules_to_save=modules_to_save 
+                )
+                self.network = get_peft_model(network, peft_config)
 
-        if not lora_enabled:
+        else:
             for param in self.network.parameters():
                 param.requires_grad = False
             
@@ -334,7 +337,7 @@ class LightningModule(lightning.LightningModule):
             block_postfix = self.block_postfix(i)
             losses = {f"{key}{block_postfix}": value for key, value in losses.items()}
             losses_all_blocks |= losses
-            
+
         return self.criterion.loss_total(losses_all_blocks, self.log)
 
     def validation_step(self, batch, batch_idx=0):

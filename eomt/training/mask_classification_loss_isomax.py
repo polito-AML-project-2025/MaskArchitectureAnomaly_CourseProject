@@ -25,7 +25,7 @@ class MaskClassificationLossIsomax(MaskClassificationLoss):
         *args,
         **kargs
     ):
-        super.__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
     
     def loss_labels(
         self, class_queries_logits: Tensor, class_labels: list[Tensor], indices: tuple[np.array]
