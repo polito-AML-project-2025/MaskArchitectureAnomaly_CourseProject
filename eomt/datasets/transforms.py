@@ -101,6 +101,9 @@ class Transforms(nn.Module):
     ) -> tuple[Tensor, dict[str, Union[Tensor, TVTensor]]]:
         img_orig, target_orig = img, target
 
+        #return img, target
+        #print('transform')
+
         target = self._filter(target, ~target["is_crowd"])
 
         img = self.color_jitter(img)

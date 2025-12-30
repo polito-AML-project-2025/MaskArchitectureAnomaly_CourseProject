@@ -46,6 +46,10 @@ class MaskClassificationSemantic(LightningModule):
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0.05,
+
+        rba_ood_supervision_enabled: bool = False,
+        rba_coefficient:float = 1e-5,
+        ood_label_id: int=254
     ):
         super().__init__(
             network=network,
@@ -87,6 +91,9 @@ class MaskClassificationSemantic(LightningModule):
             class_coefficient=class_coefficient,
             num_labels=num_classes,
             no_object_coefficient=no_object_coefficient,
+            rba_ood_supervision_enabled = rba_ood_supervision_enabled,
+            rba_coefficient = rba_coefficient,
+            ood_label_id =ood_label_id
         )
 
         self.init_metrics_semantic(ignore_idx, self.network.num_blocks + 1 if self.network.masked_attn_enabled else 1)
@@ -101,7 +108,7 @@ class MaskClassificationSemantic(LightningModule):
 
         img_sizes = [img.shape[-2:] for img in imgs]
         crops, origins = self.window_imgs_semantic(imgs)
-        mask_logits_per_layer, class_logits_per_layer = self(crops)
+        mask_logits_per_layer, class_logits_per_layer = self(crops, eval=True)
 
         targets = self.to_per_pixel_targets_semantic(targets, self.ignore_idx)
 
@@ -124,3 +131,12 @@ class MaskClassificationSemantic(LightningModule):
 
     def on_validation_end(self):
         self._on_eval_end_semantic("val")
+
+    
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        x, y = batch
+        rope = self.network.encoder.backbone.rope_embeddings(x)
+        features = self(x, predict_precomputed=True)
+        
+        return features, rope, y
+    

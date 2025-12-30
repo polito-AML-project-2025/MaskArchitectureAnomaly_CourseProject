@@ -387,14 +387,15 @@ def main():
         elif(args.anomalyScore == 'ml'):
             description = 'ml'
             anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
-            #plt.imshow(anomaly_score_list[0])
-            #plt.show()
         elif(args.anomalyScore == 'me'):
             description = 'me'
             anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
         elif(args.anomalyScore == 'rba'):
             description = 'rba'
             anomaly_score_list = logits_to_anomalyscores(logits_list, rba_anomaly)
+            for i in range(5):
+                plt.imshow(anomaly_score_list[i])
+                plt.show()
         else:
             raise ValueError("Error: unknown --anomalyScore value")
         prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)

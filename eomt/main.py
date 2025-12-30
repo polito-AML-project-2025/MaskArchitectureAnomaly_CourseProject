@@ -141,6 +141,16 @@ class LightningCLI(cli.LightningCLI):
             "model.init_args.network.init_args.encoder.init_args.ckpt_path",
         )
 
+        parser.link_arguments(
+            "data.init_args.ood_enabled",
+            "model.init_args.rba_ood_supervision_enabled",
+        )
+
+        parser.link_arguments(
+            "data.init_args.ood_label_id",
+            "model.init_args.ood_label_id",
+        )
+
     def fit(self, model, **kwargs):
         if hasattr(self.trainer.logger.experiment, "log_code"):
             is_gitignored = parse_gitignore(".gitignore")
@@ -189,14 +199,42 @@ class SaveLoRAWeightsCallback(Callback):
         model.save_pretrained(save_path)
 
 
+from lightning.pytorch.callbacks import BasePredictionWriter
+
+
+class FeatureStoreWriter(BasePredictionWriter):
+    def __init__(self, output_dir):
+        super().__init__(write_interval="batch")
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
+
+    def write_on_batch_end(
+        self, trainer, pl_module, prediction, batch_indices, batch, batch_idx, dataloader_idx
+    ):
+        features, rope, labels = prediction
+        filename = os.path.join(self.output_dir, f"batch_{batch_idx}.pt")
+        torch.save({"features": features, "rope": rope, "labels": labels}, filename)
+
+class LightningCLI_nrp(LightningCLI):
+    def predict(self, model, datamodule=None, ckpt_path=None, **kwargs):
+        kwargs["return_predictions"] = False
+        
+        return self.trainer.predict(
+            model, 
+            datamodule=datamodule, 
+            ckpt_path=ckpt_path, 
+            **kwargs
+        )
+
 def cli_main():
-    LightningCLI(
+    LightningCLI_nrp(
         LightningModule,
         LightningDataModule,
         subclass_mode_model=True,
         subclass_mode_data=True,
         save_config_callback=None,
         seed_everything_default=0,
+        
         trainer_defaults={
             "precision": "16-mixed",
             "enable_model_summary": False,
@@ -205,25 +243,26 @@ def cli_main():
                 ModelSummary(max_depth=3),
                 LearningRateMonitor(logging_interval="epoch"),
                 
-                #ModelCheckpoint(
-                #    filename="eomt-{epoch:02d}-{step}",
-                #    save_top_k=-1,
-                #    every_n_epochs=1,
-                #    #save_last=True,
-                #    #monitor="val_loss",
-                #    #mode="min"
-                #),
+                ModelCheckpoint(
+                    filename="eomt-{epoch:02d}-{step}",
+                    save_top_k=-1,
+                    every_n_epochs=1,
+                    #save_last=True,
+                    #monitor="val_loss",
+                    #mode="min"
+                ),
                 
 
                 SaveLoRAWeightsCallback(),
+                FeatureStoreWriter(output_dir="./precomputed_features"),
             ],
             "devices": 1,
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
 
-            "max_epochs": 2,
-            "limit_train_batches": 10,
-            "limit_val_batches": 2,
+            #"max_epochs": 1,
+            #"limit_train_batches": 1000,
+            "limit_val_batches": 200,
             "num_sanity_val_steps": 0,
         },
     )

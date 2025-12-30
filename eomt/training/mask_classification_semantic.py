@@ -46,6 +46,10 @@ class MaskClassificationSemantic(LightningModule):
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0.05,
+
+        rba_ood_supervision_enabled: bool = False,
+        rba_coefficient:float = 1e-5,
+        ood_label_id: int=254
     ):
         super().__init__(
             network=network,
@@ -87,6 +91,9 @@ class MaskClassificationSemantic(LightningModule):
             class_coefficient=class_coefficient,
             num_labels=num_classes,
             no_object_coefficient=no_object_coefficient,
+            rba_ood_supervision_enabled = rba_ood_supervision_enabled,
+            rba_coefficient = rba_coefficient,
+            ood_label_id =ood_label_id
         )
 
         self.init_metrics_semantic(ignore_idx, self.network.num_blocks + 1 if self.network.masked_attn_enabled else 1)

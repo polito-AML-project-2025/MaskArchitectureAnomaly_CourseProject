@@ -13,6 +13,9 @@ from datasets.lightning_data_module import LightningDataModule
 from datasets.dataset import Dataset
 from datasets.transforms import Transforms
 
+from datasets.precomputed_dataset import PrecomputedFeatureDataset
+from datasets.dataset_cocomix import CityscapesOODDataset
+
 
 class CityscapesSemantic(LightningDataModule):
     def __init__(
@@ -25,6 +28,11 @@ class CityscapesSemantic(LightningDataModule):
         color_jitter_enabled=True,
         scale_range=(0.5, 2.0),
         check_empty_targets=True,
+
+        ood_enabled: bool=True,
+        ood_prob: float=0.5,
+        ood_coco_root:str =None,
+        ood_label_id: int=254,
     ) -> None:
         super().__init__(
             path=path,
@@ -41,6 +49,11 @@ class CityscapesSemantic(LightningDataModule):
             color_jitter_enabled=color_jitter_enabled,
             scale_range=scale_range,
         )
+
+        self.ood_enabled = ood_enabled
+        self.ood_prob = ood_prob
+        self.ood_coco_root = ood_coco_root
+        self.ood_label_id = ood_label_id
 
     @staticmethod
     def target_parser(target, **kwargs):
@@ -68,14 +81,29 @@ class CityscapesSemantic(LightningDataModule):
             "target_parser": self.target_parser,
             "check_empty_targets": self.check_empty_targets,
         }
+        '''
         self.cityscapes_train_dataset = Dataset(
             transforms=self.transforms,
             img_folder_path_in_zip=Path("./leftImg8bit/train"),
             target_folder_path_in_zip=Path("./gtFine/train"),
             **cityscapes_dataset_kwargs,
         )
-        
+        '''
         #self.cityscapes_train_dataset = PrecomputedFeatureDataset(input_dir="../../Validation_Dataset/precomputed_features")
+
+        self.cityscapes_train_dataset = CityscapesOODDataset(
+            
+            transforms=self.transforms,
+            img_folder_path_in_zip=Path("./leftImg8bit/train"),
+            target_folder_path_in_zip=Path("./gtFine/train"),
+            
+            ood_enabled=self.ood_enabled,
+            ood_prob=self.ood_prob,
+            ood_coco_root=self.ood_coco_root,
+            ood_label_id=self.ood_label_id,
+            
+            **cityscapes_dataset_kwargs,
+        )
 
         self.cityscapes_val_dataset = Dataset(
             img_folder_path_in_zip=Path("./leftImg8bit/val"),

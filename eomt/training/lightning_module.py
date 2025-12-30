@@ -40,6 +40,7 @@ bold_green = "\033[1;32m"
 reset = "\033[0m"
 
 from peft import LoraConfig, get_peft_model
+import time
 
 class LightningModule(lightning.LightningModule):
     def __init__(
@@ -114,7 +115,7 @@ class LightningModule(lightning.LightningModule):
         #for name, module in network.named_modules():
         #    print(name)
 
-        modules_to_save=["class_head", "mask_head", "upscale", "q"] #["class_head", "mask_head", "upscale", "q"]
+        modules_to_save=["class_head", "mask_head"]#, "q"]
 
         if self.lora_enabled:
             
@@ -150,7 +151,7 @@ class LightningModule(lightning.LightningModule):
                     if module_name in name:
                         param.requires_grad = True
 
-    '''
+    
     def configure_optimizers(self):
         encoder_param_names = {
             n for n, _ in self.network.encoder.backbone.named_parameters()
@@ -219,8 +220,8 @@ class LightningModule(lightning.LightningModule):
                 "frequency": 1,
             },
         }
+    
     '''
-
     def configure_optimizers(self):
         base_network = self.network.base_model.model if self.lora_enabled else self.network
         
@@ -309,12 +310,12 @@ class LightningModule(lightning.LightningModule):
                 "frequency": 1,
             },
         }
-
+    '''
         
-    def forward(self, imgs):
+    def forward(self, imgs, **kargs):
         x = imgs / 255.0
 
-        return self.network(x)
+        return self.network(x, **kargs)
 
     def training_step(self, batch, batch_idx):
         imgs, targets = batch
@@ -333,7 +334,7 @@ class LightningModule(lightning.LightningModule):
             block_postfix = self.block_postfix(i)
             losses = {f"{key}{block_postfix}": value for key, value in losses.items()}
             losses_all_blocks |= losses
-
+            
         return self.criterion.loss_total(losses_all_blocks, self.log)
 
     def validation_step(self, batch, batch_idx=0):
