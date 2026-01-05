@@ -145,7 +145,6 @@ def main():
     parser.add_argument('--config', default="configs/dinov2/cityscapes/semantic/eomt_large_1024.yaml")
     parser.add_argument('--lora_weights', default=None)
     args = parser.parse_args()
-    
 
     if not os.path.exists('results.txt'):
         open('results.txt', 'w').close()
@@ -229,9 +228,9 @@ def main():
         model.network = PeftModel.from_pretrained(model.network, args.lora_weights)
         model.network.eval()
 
+    #model.network.class_head.temperature = 1/25
     #segment
     IGNORE_INDEX = 255
-
 
     def infer_semantic(img):
         with torch.no_grad(), autocast(dtype=torch.float16, device_type="cuda"):
@@ -248,9 +247,7 @@ def main():
                 mask_logits, class_logits_per_layer[-1]
             )
             logits = model.revert_window_logits_semantic(crop_logits, origins, img_sizes)
-            #preds = logits[0].argmax(0).cpu()
 
-        #pred_array = preds.numpy()
         return logits[0]
 
 
@@ -345,22 +342,28 @@ def main():
         plt.ylabel("FPR")
         plt.show()
     else:
-        if(args.anomalyScore == 'msp'):
-            description = 'msp temp: 1'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, MSP, temp=1)
-        elif(args.anomalyScore == 'ml'):
-            description = 'ml'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
-        elif(args.anomalyScore == 'me'):
-            description = 'me'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
-        elif(args.anomalyScore == 'rba'):
-            description = 'rba'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, rba_anomaly)
+        if(args.anomalyScore == 'all'):
+            anomaly_score_to_test = ['msp', 'ml', 'me', 'rba']
         else:
-            raise ValueError("Error: unknown --anomalyScore value")
-        prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
-        logResults(file, prc_auc, fpr, '(' + description +')')
+            anomaly_score_to_test = args.anomalyScore.split(",")
+
+        for anomalyScore in anomaly_score_to_test:
+            if(anomalyScore == 'msp'):
+                description = 'msp temp: 1'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, MSP, temp=1)
+            elif(anomalyScore == 'ml'):
+                description = 'ml'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
+            elif(anomalyScore == 'me'):
+                description = 'me'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
+            elif(anomalyScore == 'rba'):
+                description = 'rba'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, rba_anomaly)
+            else:
+                raise ValueError("Error: unknown --anomalyScore value")
+            prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
+            logResults(file, prc_auc, fpr, '(' + description +')')
         
         '''
         for i in range(5):

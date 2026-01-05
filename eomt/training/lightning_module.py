@@ -115,7 +115,7 @@ class LightningModule(lightning.LightningModule):
         #for name, module in network.named_modules():
         #    print(name)
 
-        modules_to_save=["class_head", "mask_head"]#, "q"]
+        modules_to_save=["class_head"]#, "mask_head"]#, "q"]
 
         if self.lora_enabled:
             if lora_weights_path is not None:

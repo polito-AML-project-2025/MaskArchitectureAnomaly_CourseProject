@@ -167,6 +167,10 @@ class MaskClassificationLoss(Mask2FormerLoss):
                 weighted_loss = loss * self.dice_coefficient
             elif "loss_cross_entropy" in loss_key:
                 weighted_loss = loss * self.class_coefficient
+            elif "loss_cross_entropy_logitsnorm" in loss_key:
+                weighted_loss = loss * self.class_coefficient
+            elif "loss_isomax" in loss_key:
+                weighted_loss = loss * self.class_coefficient
             elif "loss_rba" in loss_key:
                 weighted_loss = loss * self.rba_coefficient
             else:

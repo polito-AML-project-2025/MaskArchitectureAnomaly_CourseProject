@@ -148,7 +148,7 @@ class EoMT(nn.Module):
         )
         return attn_mask
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor, precomputed=False, eval=False, predict_precomputed = False):
         x = (x - self.encoder.pixel_mean) / self.encoder.pixel_std
 
         rope = None
