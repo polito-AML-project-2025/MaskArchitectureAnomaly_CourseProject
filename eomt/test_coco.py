@@ -4,7 +4,7 @@ from pathlib import Path
 import random
 import matplotlib.patches as mpatches
 
-from eomt.datasets.cityscapes_coco_ood_semantic import CityscapesCocoOODDataset
+from eomt.datasets.dataset_ood_exposure import CityscapesCocoOODDataset
 from datasets.cityscapes_semantic import CityscapesSemantic
 
 CITYSCAPES_ROOT = "../../Validation_Dataset/" 
