@@ -231,19 +231,25 @@ def main():
         plt.ylabel("FPR")
         plt.show()
     else:
-        if(args.anomalyScore == 'msp'):
-            description = 'msp temp: 1'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, MSP, temp=1)
-        elif(args.anomalyScore == 'ml'):
-            description = 'ml'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
-        elif(args.anomalyScore == 'me'):
-            description = 'me'
-            anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
+        if(args.anomalyScore == 'all'):
+            anomaly_score_to_test = ['msp', 'ml', 'me']
         else:
-            raise ValueError("Error: unknown --anomalyScore value")
-        prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
-        logResults(file, prc_auc, fpr, '(' + description +')')
+            anomaly_score_to_test = args.anomalyScore.split(",")
+
+        for anomalyScore in anomaly_score_to_test:
+            if(anomalyScore == 'msp'):
+                description = 'msp temp: 1'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, MSP, temp=1)
+            elif(anomalyScore == 'ml'):
+                description = 'ml'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, max_logits_anomaly)
+            elif(anomalyScore == 'me'):
+                description = 'me'
+                anomaly_score_list = logits_to_anomalyscores(logits_list, max_entropy_anomaly)
+            else:
+                raise ValueError("Error: unknown --anomalyScore value")
+            prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
+            logResults(file, prc_auc, fpr, '(' + description +')')
 
     file.write('\n')
     file.close()

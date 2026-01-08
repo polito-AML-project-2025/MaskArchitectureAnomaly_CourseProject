@@ -140,3 +140,17 @@ class MaskClassificationSemantic(LightningModule):
         
         return features, rope, y
     
+    def on_validation_epoch_end(self):
+        self._on_eval_epoch_end_semantic("val")
+
+    def on_validation_end(self):
+        self._on_eval_end_semantic("val")
+
+    def test_step(
+        self,
+        batch):
+        self.eval_step(batch)
+
+    def on_test_end(self):
+        self._on_eval_end_semantic("test")
+    

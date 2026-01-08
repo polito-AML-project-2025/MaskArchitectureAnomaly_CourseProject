@@ -4,7 +4,7 @@ from pathlib import Path
 import random
 import matplotlib.patches as mpatches
 
-from eomt.datasets.dataset_cocomix import CityscapesOODDataset
+from eomt.datasets.cityscapes_coco_ood_semantic import CityscapesCocoOODDataset
 from datasets.cityscapes_semantic import CityscapesSemantic
 
 CITYSCAPES_ROOT = "../../Validation_Dataset/" 
@@ -87,7 +87,7 @@ def colorize_mask(seg_map):
 def main():
     target_parser = CityscapesSemantic.target_parser
     
-    dataset = CityscapesOODDataset(
+    dataset = CityscapesCocoOODDataset(
         zip_path=Path(CITYSCAPES_ROOT, "leftImg8bit_trainvaltest.zip"),
         target_zip_path=Path(CITYSCAPES_ROOT, "gtFine_trainvaltest.zip"),
         img_folder_path_in_zip=Path("./leftImg8bit/train"),

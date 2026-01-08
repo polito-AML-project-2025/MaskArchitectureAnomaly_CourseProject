@@ -6,26 +6,23 @@ from torchvision import tv_tensors
 from datasets.dataset import Dataset
 from datasets.coco import COCOLoader
 
-class CityscapesOODDataset(Dataset):
+class CityscapesCocoOODDataset(Dataset):
     def __init__(
         self,
         *args,
-        ood_enabled: bool = True,
         ood_prob: float = 0.5,
         ood_coco_root: str = None,
         ood_label_id: int = 254,
+        ood_n_sample: int = 2000,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         
-        self.ood_enabled = ood_enabled
         self.ood_prob = ood_prob
         self.ood_label_id = ood_label_id
         
-        self.coco_loader = None
-        if self.ood_enabled and ood_coco_root:
-            print(ood_coco_root)
-            self.coco_loader = COCOLoader(root=ood_coco_root)
+        print(ood_coco_root)
+        self.coco_loader = COCOLoader(root=ood_coco_root, max_samples=ood_n_sample)
 
     @staticmethod
     def extract_bboxes(mask):
@@ -100,8 +97,7 @@ class CityscapesOODDataset(Dataset):
             self.transforms = saved_transforms
 
         if (
-            self.ood_enabled 
-            and self.coco_loader 
+            self.coco_loader 
             and len(self.coco_loader) > 0 
             and random.random() < self.ood_prob
         ):

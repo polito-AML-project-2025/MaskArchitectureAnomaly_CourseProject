@@ -133,3 +133,11 @@ class MaskClassificationSemantic(LightningModule):
 
     def on_validation_end(self):
         self._on_eval_end_semantic("val")
+
+    def test_test(
+        self,
+        batch):
+        self.eval_step(batch)
+
+    def on_test_end(self):
+        self._on_eval_end_semantic("test")

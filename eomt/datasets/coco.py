@@ -18,7 +18,7 @@ class COCOLoader:
         
         ann_file = os.path.join(root, "annotations", f"instances_{split}.json")
         
-        print("OOD Loader: Parsing COCO JSON...")
+        print("Parsing COCO JSON...")
         coco = COCOApi(ann_file)
         
         all_cats = coco.getCatIds()
@@ -32,7 +32,7 @@ class COCOLoader:
         if len(img_ids) > self.max_samples:
             img_ids = random.sample(img_ids, self.max_samples)
             
-        print(f"OOD Loader: Selected {len(img_ids)} samples.")
+        print(f"Selected {len(img_ids)} samples.")
 
         self.data = []
         

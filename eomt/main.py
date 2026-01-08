@@ -142,10 +142,10 @@ class LightningCLI(cli.LightningCLI):
         )
 
         parser.link_arguments(
-            "data.init_args.ood_enabled",
+            "data.init_args.train_with_ood_exposure",
             "model.init_args.rba_ood_supervision_enabled",
         )
-
+        
         parser.link_arguments(
             "data.init_args.ood_label_id",
             "model.init_args.ood_label_id",
@@ -198,7 +198,7 @@ class SaveLoRAWeightsCallback(Callback):
         os.makedirs(save_path, exist_ok=True)
         model.save_pretrained(save_path)
 
-
+'''
 from lightning.pytorch.callbacks import BasePredictionWriter
 
 
@@ -225,9 +225,10 @@ class LightningCLI_nrp(LightningCLI):
             ckpt_path=ckpt_path, 
             **kwargs
         )
+'''
 
 def cli_main():
-    LightningCLI_nrp(
+    LightningCLI(  #LightningCLI_nrp
         LightningModule,
         LightningDataModule,
         subclass_mode_model=True,
@@ -254,7 +255,7 @@ def cli_main():
                 
 
                 SaveLoRAWeightsCallback(),
-                FeatureStoreWriter(output_dir="./precomputed_features"),
+                #FeatureStoreWriter(output_dir="./precomputed_features"),
             ],
             "devices": 1,
             "gradient_clip_val": 0.01,
