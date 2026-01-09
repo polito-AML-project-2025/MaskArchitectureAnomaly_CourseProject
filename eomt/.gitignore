@@ -178,3 +178,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+results.txt
+/eomt
+/lora_weights

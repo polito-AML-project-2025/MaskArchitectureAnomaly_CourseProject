@@ -13,6 +13,8 @@ from datasets.lightning_data_module import LightningDataModule
 from datasets.dataset import Dataset
 from datasets.transforms import Transforms
 
+from datasets.dataset_ood_exposure import CityscapesCocoOODDataset
+
 
 class CityscapesSemantic(LightningDataModule):
     def __init__(
@@ -25,6 +27,11 @@ class CityscapesSemantic(LightningDataModule):
         color_jitter_enabled=True,
         scale_range=(0.5, 2.0),
         check_empty_targets=True,
+        train_with_ood_exposure = False,
+        ood_prob: float=0.5,
+        ood_coco_root:str=None,
+        ood_label_id: int=254,
+        ood_n_sample: int=2000
     ) -> None:
         super().__init__(
             path=path,
@@ -34,7 +41,13 @@ class CityscapesSemantic(LightningDataModule):
             img_size=img_size,
             check_empty_targets=check_empty_targets,
         )
+
         self.save_hyperparameters(ignore=["_class_path"])
+        self.train_with_ood_exposure = train_with_ood_exposure
+        self.ood_prob = ood_prob
+        self.ood_coco_root = ood_coco_root
+        self.ood_label_id = ood_label_id
+        self.ood_n_sample = ood_n_sample
 
         self.transforms = Transforms(
             img_size=img_size,
@@ -68,12 +81,26 @@ class CityscapesSemantic(LightningDataModule):
             "target_parser": self.target_parser,
             "check_empty_targets": self.check_empty_targets,
         }
-        self.cityscapes_train_dataset = Dataset(
-            transforms=self.transforms,
-            img_folder_path_in_zip=Path("./leftImg8bit/train"),
-            target_folder_path_in_zip=Path("./gtFine/train"),
-            **cityscapes_dataset_kwargs,
-        )
+
+        if self.train_with_ood_exposure:
+            self.cityscapes_train_dataset = CityscapesCocoOODDataset(
+                transforms=self.transforms,
+                img_folder_path_in_zip=Path("./leftImg8bit/train"),
+                target_folder_path_in_zip=Path("./gtFine/train"),
+                ood_prob=self.ood_prob,
+                ood_coco_root=self.ood_coco_root,
+                ood_label_id=self.ood_label_id,
+                ood_n_sample=self.ood_n_sample,
+                **cityscapes_dataset_kwargs,
+            )
+        else:
+            self.cityscapes_train_dataset = Dataset(
+                transforms=self.transforms,
+                img_folder_path_in_zip=Path("./leftImg8bit/train"),
+                target_folder_path_in_zip=Path("./gtFine/train"),
+                **cityscapes_dataset_kwargs,
+            )
+
         self.cityscapes_val_dataset = Dataset(
             img_folder_path_in_zip=Path("./leftImg8bit/val"),
             target_folder_path_in_zip=Path("./gtFine/val"),
@@ -86,7 +113,7 @@ class CityscapesSemantic(LightningDataModule):
         return DataLoader(
             self.cityscapes_train_dataset,
             shuffle=True,
-            drop_last=True,
+            #drop_last=True,
             collate_fn=self.train_collate,
             **self.dataloader_kwargs,
         )
@@ -97,3 +124,13 @@ class CityscapesSemantic(LightningDataModule):
             collate_fn=self.eval_collate,
             **self.dataloader_kwargs,
         )
+    
+    def predict_dataloader(self):
+        return DataLoader(
+            self.cityscapes_train_dataset,
+            shuffle=False,
+            drop_last=False,
+            collate_fn=self.train_collate,
+            **self.dataloader_kwargs,
+        )
+    

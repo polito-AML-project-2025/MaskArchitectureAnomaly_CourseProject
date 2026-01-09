@@ -8,7 +8,7 @@ from typing import List, Optional
 import torch.nn as nn
 import torch.nn.functional as F
 
-from training.mask_classification_loss import MaskClassificationLoss
+from training.mask_classification_loss_logitsnorm import MaskClassificationLossLogitsnorm
 from training.lightning_module import LightningModule
 
 
@@ -43,7 +43,6 @@ class MaskClassificationSemantic(LightningModule):
         load_ckpt_class_head: bool = True,
 
         lora_enabled: bool = False,
-        lora_weights_path=None,
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0.05,
@@ -71,7 +70,6 @@ class MaskClassificationSemantic(LightningModule):
             load_ckpt_class_head=load_ckpt_class_head,
 
             lora_enabled=lora_enabled,
-            lora_weights_path = lora_weights_path,
             lora_r=lora_r,
             lora_alpha=lora_alpha,
             lora_dropout=lora_dropout,
@@ -84,7 +82,7 @@ class MaskClassificationSemantic(LightningModule):
         self.overlap_thresh = overlap_thresh
         self.stuff_classes = range(num_classes)
 
-        self.criterion = MaskClassificationLoss(
+        self.criterion = MaskClassificationLossLogitsnorm(
             num_points=num_points,
             oversample_ratio=oversample_ratio,
             importance_sample_ratio=importance_sample_ratio,
@@ -110,7 +108,7 @@ class MaskClassificationSemantic(LightningModule):
 
         img_sizes = [img.shape[-2:] for img in imgs]
         crops, origins = self.window_imgs_semantic(imgs)
-        mask_logits_per_layer, class_logits_per_layer = self(crops)
+        mask_logits_per_layer, class_logits_per_layer = self(crops, eval=True)
 
         targets = self.to_per_pixel_targets_semantic(targets, self.ignore_idx)
 
@@ -134,10 +132,25 @@ class MaskClassificationSemantic(LightningModule):
     def on_validation_end(self):
         self._on_eval_end_semantic("val")
 
-    def test_test(
+    
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        x, y = batch
+        rope = self.network.encoder.backbone.rope_embeddings(x)
+        features = self(x, predict_precomputed=True)
+        
+        return features, rope, y
+    
+    def on_validation_epoch_end(self):
+        self._on_eval_epoch_end_semantic("val")
+
+    def on_validation_end(self):
+        self._on_eval_end_semantic("val")
+
+    def test_step(
         self,
         batch):
         self.eval_step(batch)
 
     def on_test_end(self):
         self._on_eval_end_semantic("test")
+    

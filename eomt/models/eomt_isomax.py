@@ -35,7 +35,7 @@ class EoMT(nn.Module):
 
         self.q = nn.Embedding(num_q, self.encoder.backbone.embed_dim)
 
-        self.class_head = nn.Linear(self.encoder.backbone.embed_dim, num_classes + 1)
+        self.class_head = IsoMaxPlusLossFirstPart(self.encoder.backbone.embed_dim, num_classes + 1)
 
         self.mask_head = nn.Sequential(
             nn.Linear(self.encoder.backbone.embed_dim, self.encoder.backbone.embed_dim),
@@ -149,22 +149,34 @@ class EoMT(nn.Module):
         return attn_mask
 
     def forward(self, x: torch.Tensor, precomputed=False, eval=False, predict_precomputed = False):
-        x = (x - self.encoder.pixel_mean) / self.encoder.pixel_std
-
         rope = None
-        if hasattr(self.encoder.backbone, "rope_embeddings"):
-            rope = self.encoder.backbone.rope_embeddings(x)
 
-        x = self.encoder.backbone.patch_embed(x)
+        if precomputed and not eval:
+            x, rope = x
 
-        if hasattr(self.encoder.backbone, "_pos_embed"):
-            x = self.encoder.backbone._pos_embed(x)
+        if(not precomputed or eval):
+            x = (x - self.encoder.pixel_mean) / self.encoder.pixel_std
+
+            if hasattr(self.encoder.backbone, "rope_embeddings"):
+                rope = self.encoder.backbone.rope_embeddings(x)
+
+            x = self.encoder.backbone.patch_embed(x)
+
+            if hasattr(self.encoder.backbone, "_pos_embed"):
+                x = self.encoder.backbone._pos_embed(x)
+        
 
         attn_mask = None
         mask_logits_per_layer, class_logits_per_layer = [], []
 
         for i, block in enumerate(self.encoder.backbone.blocks):
+            if precomputed and not eval and i < len(self.encoder.backbone.blocks) - self.num_blocks:
+                continue
+
             if i == len(self.encoder.backbone.blocks) - self.num_blocks:
+                if predict_precomputed:
+                    return x
+
                 x = torch.cat(
                     (self.q.weight[None, :, :].expand(x.shape[0], -1, -1), x), dim=1
                 )

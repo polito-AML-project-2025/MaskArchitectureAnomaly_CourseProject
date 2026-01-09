@@ -14,12 +14,14 @@ import logging
 import torch
 import warnings
 from lightning.pytorch import cli
-from lightning.pytorch.callbacks import ModelSummary, LearningRateMonitor
+from lightning.pytorch.callbacks import ModelSummary, LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loops.training_epoch_loop import _TrainingEpochLoop
 from lightning.pytorch.loops.fetchers import _DataFetcher, _DataLoaderIterDataFetcher
 
 from training.lightning_module import LightningModule
 from datasets.lightning_data_module import LightningDataModule
+from lightning.pytorch.callbacks import Callback
+from datetime import datetime
 
 # Suppress PyTorch FX warnings for DINOv3 models
 import os
@@ -139,6 +141,16 @@ class LightningCLI(cli.LightningCLI):
             "model.init_args.network.init_args.encoder.init_args.ckpt_path",
         )
 
+        parser.link_arguments(
+            "data.init_args.train_with_ood_exposure",
+            "model.init_args.rba_ood_supervision_enabled",
+        )
+        
+        parser.link_arguments(
+            "data.init_args.ood_label_id",
+            "model.init_args.ood_label_id",
+        )
+
     def fit(self, model, **kwargs):
         if hasattr(self.trainer.logger.experiment, "log_code"):
             is_gitignored = parse_gitignore(".gitignore")
@@ -151,30 +163,108 @@ class LightningCLI(cli.LightningCLI):
             _should_check_val_fx, self.trainer.fit_loop.epoch_loop
         )
 
-        if not self.config[self.config["subcommand"]]["compile_disabled"]:
-            model = torch.compile(model)
+        #if not self.config[self.config["subcommand"]]["compile_disabled"]:
+        #    model = torch.compile(model)
 
         self.trainer.fit(model, **kwargs)
 
+class SaveLoRAWeightsCallback(Callback):
+    def __init__(self, root_dir="lora_weights"):
+        self.root_dir = root_dir
+        self.run_dir = None
+
+    def on_fit_start(self, trainer, pl_module):
+        if self.run_dir is None:
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            self.run_dir = os.path.join(self.root_dir, timestamp)
+
+    def on_train_epoch_end(self, trainer, pl_module):
+
+        if hasattr(pl_module, "hparams") and "lora_enabled" in pl_module.hparams:
+            lora_enabled = pl_module.hparams.lora_enabled
+
+        if not lora_enabled:
+            return
+
+        model = getattr(pl_module, "network", getattr(pl_module, "model", None))
+        if not hasattr(model, "save_pretrained"):
+            return
+        
+        save_path = os.path.join(
+            self.run_dir, 
+            f"epoch-{trainer.current_epoch:02d}"
+        )
+        
+        os.makedirs(save_path, exist_ok=True)
+        model.save_pretrained(save_path)
+
+'''
+from lightning.pytorch.callbacks import BasePredictionWriter
+
+
+class FeatureStoreWriter(BasePredictionWriter):
+    def __init__(self, output_dir):
+        super().__init__(write_interval="batch")
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
+
+    def write_on_batch_end(
+        self, trainer, pl_module, prediction, batch_indices, batch, batch_idx, dataloader_idx
+    ):
+        features, rope, labels = prediction
+        filename = os.path.join(self.output_dir, f"batch_{batch_idx}.pt")
+        torch.save({"features": features, "rope": rope, "labels": labels}, filename)
+
+class LightningCLI_nrp(LightningCLI):
+    def predict(self, model, datamodule=None, ckpt_path=None, **kwargs):
+        kwargs["return_predictions"] = False
+        
+        return self.trainer.predict(
+            model, 
+            datamodule=datamodule, 
+            ckpt_path=ckpt_path, 
+            **kwargs
+        )
+'''
 
 def cli_main():
-    LightningCLI(
+    LightningCLI(  #LightningCLI_nrp
         LightningModule,
         LightningDataModule,
         subclass_mode_model=True,
         subclass_mode_data=True,
         save_config_callback=None,
         seed_everything_default=0,
+        
         trainer_defaults={
             "precision": "16-mixed",
             "enable_model_summary": False,
+            "enable_checkpointing": True,
             "callbacks": [
                 ModelSummary(max_depth=3),
                 LearningRateMonitor(logging_interval="epoch"),
+                
+                ModelCheckpoint(
+                    filename="eomt-{epoch:02d}-{step}",
+                    save_top_k=-1,
+                    every_n_epochs=1,
+                    save_last=True,
+                    #monitor="val_loss",
+                    #mode="min"
+                ),
+                
+
+                SaveLoRAWeightsCallback(),
+                #FeatureStoreWriter(output_dir="./precomputed_features"),
             ],
             "devices": 1,
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
+
+            #"max_epochs": 1,
+            #"limit_train_batches": 100,
+            #"limit_val_batches": 200,
+            "num_sanity_val_steps": 0,
         },
     )
 

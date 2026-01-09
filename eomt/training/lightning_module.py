@@ -39,6 +39,7 @@ from training.two_stage_warmup_poly_schedule import TwoStageWarmupPolySchedule
 bold_green = "\033[1;32m"
 reset = "\033[0m"
 
+from peft import LoraConfig, get_peft_model, PeftModel
 
 class LightningModule(lightning.LightningModule):
     def __init__(
@@ -59,6 +60,12 @@ class LightningModule(lightning.LightningModule):
         ckpt_path=None,
         delta_weights=False,
         load_ckpt_class_head=True,
+
+        lora_enabled: bool = False,
+        lora_weights_path=None,
+        lora_r: int = 8,
+        lora_alpha: int = 32,
+        lora_dropout: float = 0,
     ):
         super().__init__()
 
@@ -77,6 +84,11 @@ class LightningModule(lightning.LightningModule):
         self.llrd_l2_enabled = llrd_l2_enabled
 
         self.strict_loading = False
+
+        self.lora_enabled = lora_enabled
+        self.lora_r = lora_r
+        self.lora_alpha = lora_alpha
+        self.lora_dropout = lora_dropout
 
         if delta_weights and ckpt_path:
             logging.info("Delta weights mode")
@@ -98,7 +110,51 @@ class LightningModule(lightning.LightningModule):
             self._raise_on_incompatible(incompatible_keys, load_ckpt_class_head)
 
         self.log = torch.compiler.disable(self.log)  # type: ignore
+    
+        #print(len(self.network.encoder.backbone.blocks))
+        #for name, module in network.named_modules():
+        #    print(name)
 
+        modules_to_save=["class_head"]#, "mask_head"]#, "q"]
+
+        if self.lora_enabled:
+            if lora_weights_path is not None:
+                print('load lora weights')
+                self.network = PeftModel.from_pretrained(self.network, lora_weights_path)
+            else:
+                base_targets = ["qkv", "proj", "fc1", "fc2"]
+                net_len = len(self.network.encoder.backbone.blocks)
+                lora_blocks = range(net_len - self.network.num_blocks, net_len) #all blocks with queries
+                
+                if lora_blocks is not None:
+                    target_modules = []
+                    for i in lora_blocks:
+                        for target in base_targets:
+                            target_modules.append(f"blocks.{i}.attn.{target}")
+                            target_modules.append(f"blocks.{i}.mlp.{target}")
+                else:
+                    target_modules = base_targets
+                
+                peft_config = LoraConfig(
+                    r=lora_r,
+                    lora_alpha=lora_alpha,
+                    lora_dropout=lora_dropout,
+                    bias="none",
+                    target_modules=target_modules,
+                    modules_to_save=modules_to_save 
+                )
+                self.network = get_peft_model(network, peft_config)
+
+        else:
+            for param in self.network.parameters():
+                param.requires_grad = False
+            
+            for name, param in self.network.named_parameters():
+                for module_name in modules_to_save:
+                    if module_name in name:
+                        param.requires_grad = True
+
+    
     def configure_optimizers(self):
         encoder_param_names = {
             n for n, _ in self.network.encoder.backbone.named_parameters()
@@ -167,11 +223,102 @@ class LightningModule(lightning.LightningModule):
                 "frequency": 1,
             },
         }
+    
+    '''
+    def configure_optimizers(self):
+        base_network = self.network.base_model.model if self.lora_enabled else self.network
+        
+        encoder_param_names = {
+            n for n, _ in base_network.encoder.backbone.named_parameters()
+        }
+        backbone_blocks = len(base_network.encoder.backbone.blocks)
+        
+        backbone_param_groups = []
+        other_param_groups = []
+        
+        block_i = backbone_blocks
+        l2_blocks = torch.arange(
+            backbone_blocks - base_network.num_blocks, backbone_blocks
+        ).tolist()
 
-    def forward(self, imgs):
+        for name, param in reversed(list(self.named_parameters())):
+            if not param.requires_grad:
+                continue
+
+            lr = self.lr
+
+            clean_name = name.replace("base_model.model.", "").replace("network.", "")
+            
+            clean_name_for_check = clean_name.split(".lora_")[0]
+
+            is_backbone_param = False
+            for enc_name in encoder_param_names:
+                if enc_name in clean_name_for_check:
+                    is_backbone_param = True
+                    break
+            
+            if is_backbone_param:
+                name_list = clean_name.split(".")
+
+                is_block = False
+                for i, key in enumerate(name_list):
+                    if key == "blocks":
+                        try:
+                            block_i = int(name_list[i + 1])
+                            is_block = True
+                        except (ValueError, IndexError):
+                            pass
+
+                if is_block or block_i == 0:
+                    lr *= self.llrd ** (backbone_blocks - 1 - block_i)
+
+                elif (is_block or block_i == 0) and self.lr_mult != 1.0:
+                    lr *= self.lr_mult
+
+                if "backbone.norm" in name:
+                    lr = self.lr
+
+                if (
+                    is_block
+                    and (block_i in l2_blocks)
+                    and ((not self.llrd_l2_enabled) or (self.lr_mult != 1.0))
+                ):
+                    lr = self.lr
+
+                backbone_param_groups.append(
+                    {"params": [param], "lr": lr, "name": name}
+                )
+            else:
+                other_param_groups.append(
+                    {"params": [param], "lr": self.lr, "name": name}
+                )
+
+        param_groups = backbone_param_groups + other_param_groups
+        
+        optimizer = AdamW(param_groups, weight_decay=self.weight_decay)
+
+        scheduler = TwoStageWarmupPolySchedule(
+            optimizer,
+            num_backbone_params=len(backbone_param_groups),
+            warmup_steps=self.warmup_steps,
+            total_steps=self.trainer.estimated_stepping_batches,
+            poly_power=self.poly_power,
+        )
+
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "interval": "step",
+                "frequency": 1,
+            },
+        }
+    '''
+        
+    def forward(self, imgs, **kargs):
         x = imgs / 255.0
 
-        return self.network(x)
+        return self.network(x, **kargs)
 
     def training_step(self, batch, batch_idx):
         imgs, targets = batch
