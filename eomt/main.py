@@ -249,7 +249,7 @@ def cli_main():
                     save_top_k=-1,
                     every_n_epochs=1,
                     save_last=True,
-                    #monitor="val_loss",
+                    #monitor="metrics/val_iou_all",
                     #mode="min"
                 ),
 
