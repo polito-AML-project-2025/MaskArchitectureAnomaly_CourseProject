@@ -6,6 +6,8 @@ trainer:
       resume: allow
       project: "eomt"
       name: "cityscapes_semantic_eomt_large_1024"
+  callbacks:
+    - class_path: utils.SaveLoRAWeightsCallback.SaveLoRAWeightsCallback
 model:
   class_path: training.mask_classification_semantic.MaskClassificationSemantic
   init_args:

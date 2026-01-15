@@ -168,67 +168,8 @@ class LightningCLI(cli.LightningCLI):
 
         self.trainer.fit(model, **kwargs)
 
-class SaveLoRAWeightsCallback(Callback):
-    def __init__(self, root_dir="lora_weights"):
-        self.root_dir = root_dir
-        self.run_dir = None
-
-    def on_fit_start(self, trainer, pl_module):
-        if self.run_dir is None:
-            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            self.run_dir = os.path.join(self.root_dir, timestamp)
-
-    def on_train_epoch_end(self, trainer, pl_module):
-
-        if hasattr(pl_module, "hparams") and "lora_enabled" in pl_module.hparams:
-            lora_enabled = pl_module.hparams.lora_enabled
-
-        if not lora_enabled:
-            return
-
-        model = getattr(pl_module, "network", getattr(pl_module, "model", None))
-        if not hasattr(model, "save_pretrained"):
-            return
-        
-        save_path = os.path.join(
-            self.run_dir, 
-            f"epoch-{trainer.current_epoch:02d}"
-        )
-        
-        os.makedirs(save_path, exist_ok=True)
-        model.save_pretrained(save_path)
-
-'''
-from lightning.pytorch.callbacks import BasePredictionWriter
-
-
-class FeatureStoreWriter(BasePredictionWriter):
-    def __init__(self, output_dir):
-        super().__init__(write_interval="batch")
-        self.output_dir = output_dir
-        os.makedirs(self.output_dir, exist_ok=True)
-
-    def write_on_batch_end(
-        self, trainer, pl_module, prediction, batch_indices, batch, batch_idx, dataloader_idx
-    ):
-        features, rope, labels = prediction
-        filename = os.path.join(self.output_dir, f"batch_{batch_idx}.pt")
-        torch.save({"features": features, "rope": rope, "labels": labels}, filename)
-
-class LightningCLI_nrp(LightningCLI):
-    def predict(self, model, datamodule=None, ckpt_path=None, **kwargs):
-        kwargs["return_predictions"] = False
-        
-        return self.trainer.predict(
-            model, 
-            datamodule=datamodule, 
-            ckpt_path=ckpt_path, 
-            **kwargs
-        )
-'''
-
 def cli_main():
-    LightningCLI(  #LightningCLI_nrp
+    LightningCLI(
         LightningModule,
         LightningDataModule,
         subclass_mode_model=True,
@@ -261,18 +202,15 @@ def cli_main():
                     verbose=True,
                     mode="min"
                 ),
-                
 
-                SaveLoRAWeightsCallback(),
-                #FeatureStoreWriter(output_dir="./precomputed_features"),
             ],
             "devices": 1,
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
 
             #"max_epochs": 1,
-            "limit_train_batches": 500,
-            "limit_val_batches": 200,
+            "limit_train_batches": 50,
+            "limit_val_batches": 20,
             "num_sanity_val_steps": 0,
         },
     )
