@@ -150,7 +150,7 @@ class LightningModule(lightning.LightningModule):
                 param.requires_grad = False
             
             for name, param in self.network.named_parameters():
-                for module_name in modules_to_save:
+                for module_name in self.lora_modules_to_save:
                     if module_name in name:
                         param.requires_grad = True
 

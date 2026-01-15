@@ -209,9 +209,9 @@ def cli_main():
             "gradient_clip_algorithm": "norm",
 
             #"max_epochs": 1,
-            "limit_train_batches": 50,
-            "limit_val_batches": 20,
-            "num_sanity_val_steps": 0,
+            #"limit_train_batches": 500,
+            #"limit_val_batches": 200,
+            #"num_sanity_val_steps": 0,
         },
     )
 
