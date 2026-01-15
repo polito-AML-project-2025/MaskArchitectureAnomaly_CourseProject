@@ -20,6 +20,7 @@ import warnings
 import json
 from datetime import datetime
 import pickle
+from peft import PeftModel
 
 seed = 42
 random.seed(seed)
@@ -39,7 +40,7 @@ target_transform = Compose([
 ])
 
 
-def load_eomt_model(config_path, checkpoint_path, device='cuda'):
+def load_eomt_model(config_path, checkpoint_path, lora_weights=None, device='cuda'):
     """Load EoMT model following official approach"""
     
     # Add eomt to path
@@ -100,6 +101,12 @@ def load_eomt_model(config_path, checkpoint_path, device='cuda'):
         state_dict = checkpoint
     
     model.load_state_dict(state_dict, strict=False)
+
+    if lora_weights is not None:
+        print('Loading lora weights')
+        model.network = PeftModel.from_pretrained(model.network, lora_weights)
+        model.network.eval().to(device)
+
     print("Model and weights LOADED successfully")
     
     return model, img_size
@@ -140,7 +147,7 @@ def save_logits(args):
     device = 'cpu' if args.cpu else 'cuda'
     
     # Load model
-    model, img_size = load_eomt_model(args.config, args.checkpoint, device)
+    model, img_size = load_eomt_model(args.config, args.checkpoint, args.lora_weights, device)
     
     logits_data = []
     
@@ -346,6 +353,11 @@ def main():
         "--checkpoint",
         required=True,
         help="Path to EoMT checkpoint"
+    )
+    parser.add_argument(
+        "--lora_weights",
+        default=None,
+        help="Path to Lora weights checkpoint"
     )
     parser.add_argument(
         "--config",
