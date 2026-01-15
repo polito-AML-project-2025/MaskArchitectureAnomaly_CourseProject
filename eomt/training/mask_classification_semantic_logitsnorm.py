@@ -131,26 +131,4 @@ class MaskClassificationSemantic(LightningModule):
 
     def on_validation_end(self):
         self._on_eval_end_semantic("val")
-
-    
-    def predict_step(self, batch, batch_idx, dataloader_idx=0):
-        x, y = batch
-        rope = self.network.encoder.backbone.rope_embeddings(x)
-        features = self(x, predict_precomputed=True)
-        
-        return features, rope, y
-    
-    def on_validation_epoch_end(self):
-        self._on_eval_epoch_end_semantic("val")
-
-    def on_validation_end(self):
-        self._on_eval_end_semantic("val")
-
-    def test_step(
-        self,
-        batch):
-        self.eval_step(batch)
-
-    def on_test_end(self):
-        self._on_eval_end_semantic("test")
     

@@ -14,7 +14,7 @@ import logging
 import torch
 import warnings
 from lightning.pytorch import cli
-from lightning.pytorch.callbacks import ModelSummary, LearningRateMonitor, ModelCheckpoint
+from lightning.pytorch.callbacks import ModelSummary, LearningRateMonitor, ModelCheckpoint, EarlyStopping
 from lightning.pytorch.loops.training_epoch_loop import _TrainingEpochLoop
 from lightning.pytorch.loops.fetchers import _DataFetcher, _DataLoaderIterDataFetcher
 
@@ -252,6 +252,15 @@ def cli_main():
                     #monitor="val_loss",
                     #mode="min"
                 ),
+
+                EarlyStopping(
+                    strict=True,
+                    monitor="metrics/val_iou_all",
+                    min_delta=0.00,
+                    patience=5,
+                    verbose=True,
+                    mode="min"
+                ),
                 
 
                 SaveLoRAWeightsCallback(),
@@ -262,8 +271,8 @@ def cli_main():
             "gradient_clip_algorithm": "norm",
 
             #"max_epochs": 1,
-            #"limit_train_batches": 100,
-            #"limit_val_batches": 200,
+            "limit_train_batches": 500,
+            "limit_val_batches": 200,
             "num_sanity_val_steps": 0,
         },
     )
