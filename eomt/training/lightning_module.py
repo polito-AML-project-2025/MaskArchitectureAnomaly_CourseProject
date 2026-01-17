@@ -66,10 +66,11 @@ class LightningModule(lightning.LightningModule):
 
         lora_enabled: bool = False,
         lora_weights_path=None,
-        lora_modules_to_save= ["class_head"],
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0,
+
+        modules_to_train = [],
     ):
         super().__init__()
 
@@ -90,10 +91,11 @@ class LightningModule(lightning.LightningModule):
         self.strict_loading = False
 
         self.lora_enabled = lora_enabled
-        self.lora_modules_to_save = lora_modules_to_save
         self.lora_r = lora_r
         self.lora_alpha = lora_alpha
         self.lora_dropout = lora_dropout
+
+        self.modules_to_train = modules_to_train
 
         if delta_weights and ckpt_path:
             logging.info("Delta weights mode")
@@ -144,16 +146,16 @@ class LightningModule(lightning.LightningModule):
                     lora_dropout=lora_dropout,
                     bias="none",
                     target_modules=target_modules,
-                    modules_to_save=self.lora_modules_to_save 
+                    modules_to_save=self.modules_to_train 
                 )
                 self.network = get_peft_model(network, peft_config)
 
-        else:
+        elif len(self.modules_to_train) > 0:
             for param in self.network.parameters():
                 param.requires_grad = False
             
             for name, param in self.network.named_parameters():
-                for module_name in self.lora_modules_to_save:
+                for module_name in self.modules_to_train:
                     if module_name in name:
                         param.requires_grad = True
 

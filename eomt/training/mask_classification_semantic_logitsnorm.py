@@ -11,8 +11,10 @@ import torch.nn.functional as F
 from training.mask_classification_loss_logitsnorm import MaskClassificationLossLogitsnorm
 from training.lightning_module import LightningModule
 
+from training.mask_classification_semantic import MaskClassificationSemantic
 
-class MaskClassificationSemantic(LightningModule):
+
+class MaskClassificationSemanticLogitsnorm(LightningModule):
     def __init__(
         self,
         network: nn.Module,
@@ -43,10 +45,11 @@ class MaskClassificationSemantic(LightningModule):
         load_ckpt_class_head: bool = True,
 
         lora_enabled: bool = False,
-        lora_modules_to_save= ["class_head"],
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0.05,
+
+        modules_to_train = [],
 
         rba_ood_supervision_enabled: bool = False,
         rba_coefficient:float = 1e-5,
@@ -72,10 +75,11 @@ class MaskClassificationSemantic(LightningModule):
             load_ckpt_class_head=load_ckpt_class_head,
 
             lora_enabled=lora_enabled,
-            lora_modules_to_save=lora_modules_to_save,
             lora_r=lora_r,
             lora_alpha=lora_alpha,
             lora_dropout=lora_dropout,
+
+            modules_to_train = modules_to_train,
         )
 
         self.save_hyperparameters(ignore=["_class_path"])
@@ -135,4 +139,3 @@ class MaskClassificationSemantic(LightningModule):
 
     def on_validation_end(self):
         self._on_eval_end_semantic("val")
-

@@ -194,21 +194,12 @@ def cli_main():
                     #mode="min"
                 ),
                 
-                EarlyStopping(
-                    strict=False,
-                    monitor="metrics/val_iou_all",
-                    min_delta=0.00,
-                    patience=5,
-                    verbose=False,
-                    mode="min"
-                ),
-                
             ],
             "devices": 1,
             "gradient_clip_val": 0.01,
             "gradient_clip_algorithm": "norm",
 
-            "max_epochs": 1,
+            #"max_epochs": 1,
             #"limit_train_batches": 1000,
             #"limit_val_batches": 0,
             "num_sanity_val_steps": 0,

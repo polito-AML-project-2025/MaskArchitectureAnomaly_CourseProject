@@ -44,17 +44,18 @@ class MaskClassificationSemantic(LightningModule):
 
         lora_enabled: bool = False,
         lora_weights_path=None,
-        lora_modules_to_save= ["class_head"],
         lora_r: int = 8,
         lora_alpha: int = 32,
         lora_dropout: float = 0.05,
+
+        modules_to_train = [],
 
         rba_ood_supervision_enabled: bool = False,
         rba_coefficient:float = 1e-5,
         rba_aplha:float = 5,
         ood_label_id: int=254,
 
-        save_res_dict: bool = False
+        save_res_dict: bool = False,
     ):
         super().__init__(
             network=network,
@@ -76,10 +77,11 @@ class MaskClassificationSemantic(LightningModule):
 
             lora_enabled=lora_enabled,
             lora_weights_path = lora_weights_path,
-            lora_modules_to_save=lora_modules_to_save,
             lora_r=lora_r,
             lora_alpha=lora_alpha,
             lora_dropout=lora_dropout,
+
+            modules_to_train = modules_to_train,
         )
 
         self.save_hyperparameters(ignore=["_class_path"])
