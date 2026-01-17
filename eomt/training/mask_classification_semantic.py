@@ -51,7 +51,10 @@ class MaskClassificationSemantic(LightningModule):
 
         rba_ood_supervision_enabled: bool = False,
         rba_coefficient:float = 1e-5,
-        ood_label_id: int=254
+        rba_aplha:float = 5,
+        ood_label_id: int=254,
+
+        save_res_dict: bool = False
     ):
         super().__init__(
             network=network,
@@ -86,6 +89,8 @@ class MaskClassificationSemantic(LightningModule):
         self.overlap_thresh = overlap_thresh
         self.stuff_classes = range(num_classes)
 
+        self.save_res_dict = save_res_dict
+
         self.criterion = MaskClassificationLoss(
             num_points=num_points,
             oversample_ratio=oversample_ratio,
@@ -97,7 +102,8 @@ class MaskClassificationSemantic(LightningModule):
             no_object_coefficient=no_object_coefficient,
             rba_ood_supervision_enabled = rba_ood_supervision_enabled,
             rba_coefficient = rba_coefficient,
-            ood_label_id =ood_label_id
+            ood_label_id =ood_label_id,
+            rba_aplha = rba_aplha,
         )
 
         self.init_metrics_semantic(ignore_idx, self.network.num_blocks + 1 if self.network.masked_attn_enabled else 1)
@@ -131,15 +137,7 @@ class MaskClassificationSemantic(LightningModule):
                 )
 
     def on_validation_epoch_end(self):
-        self._on_eval_epoch_end_semantic("val")
+        self._on_eval_epoch_end_semantic("val",save_res_dict= self.save_res_dict)
 
     def on_validation_end(self):
         self._on_eval_end_semantic("val")
-
-    def test_test(
-        self,
-        batch):
-        self.eval_step(batch)
-
-    def on_test_end(self):
-        self._on_eval_end_semantic("test")

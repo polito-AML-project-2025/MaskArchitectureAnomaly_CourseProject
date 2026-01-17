@@ -57,7 +57,7 @@ def load_eomt_model(config_path, checkpoint_path, lora_weights=None, device='cud
     )
     
     # Get image size from config
-    img_size = config["data"]["init_args"]["img_size"]
+    img_size = (1024,1024)#config["data"]["init_args"]["img_size"]
     num_classes = 19  # Cityscapes has 19 classes
     
     # Load encoder

@@ -10,10 +10,15 @@ from pycocotools import mask as maskUtils
 COCO_CITYSCAPES_EXCLUSION = [1, 2, 3, 4, 6, 7, 8, 10, 13]
 
 class COCOLoader:
-    def __init__(self, root: str, split: str = "train2017", exclusion_list=None, max_samples=2000):
+    def __init__(self, root: str, split: str = "train2017", exclusion_list=None, max_samples=2000, seed=42):
         self.root = root
         self.split = split
         self.max_samples = max_samples
+
+        self.seed = seed
+        random.seed(self.seed)
+        np.random.seed(self.seed)
+
         exclusion_list = exclusion_list if exclusion_list is not None else COCO_CITYSCAPES_EXCLUSION
         
         ann_file = os.path.join(root, "annotations", f"instances_{split}.json")
@@ -22,12 +27,12 @@ class COCOLoader:
         coco = COCOApi(ann_file)
         
         all_cats = coco.getCatIds()
-        valid_cats = list(set(all_cats) - set(exclusion_list))
+        valid_cats = sorted(list(set(all_cats) - set(exclusion_list)))
         
         img_ids = []
         for cat_id in valid_cats:
             img_ids.extend(coco.getImgIds(catIds=[cat_id]))
-        img_ids = list(set(img_ids))
+        img_ids = sorted(list(set(img_ids)))
         
         if len(img_ids) > self.max_samples:
             img_ids = random.sample(img_ids, self.max_samples)

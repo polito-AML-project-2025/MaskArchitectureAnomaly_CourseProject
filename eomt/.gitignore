@@ -182,3 +182,5 @@ cython_debug/
 results.txt
 /eomt
 /lora_weights
+/eval_res_dic
+/eval_res_iou_dic

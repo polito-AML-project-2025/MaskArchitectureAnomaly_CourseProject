@@ -25,6 +25,10 @@ from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 from tqdm import tqdm
 
 from peft import PeftModel
+import pickle
+from pathlib import Path
+import secrets
+import string
 
 
 
@@ -99,7 +103,7 @@ def computeMetrics(anomaly_score_list, ood_mask, ind_mask):
 
 def logResults(file, prc_auc, fpr, description, toPrint=True):
     file.write( "\n")
-    file.write('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) +'   ' +description)
+    file.write('    AUPRC score:' + str(prc_auc*100.0) + '   FPR@TPR95:' + str(fpr*100.0) +'   ' + description)
     if(toPrint):
         print(description)
         print(f'AUPRC score: {prc_auc*100.0}')
@@ -144,14 +148,17 @@ def main():
     parser.add_argument('--temps', default=None)
     parser.add_argument('--config', default="configs/dinov2/cityscapes/semantic/eomt_large_1024.yaml")
     parser.add_argument('--lora_weights', default=None)
+    parser.add_argument('--save_res_dict', default=False)
     args = parser.parse_args()
 
-    if not os.path.exists('results.txt'):
-        open('results.txt', 'w').close()
-    file = open('results.txt', 'a')
+    p = Path(args.input[0])
+    dataset_name = p.parent.parent.name
+    print(dataset_name)
 
+    if not os.path.exists('results_eomt.txt'):
+        open('results_eomt.txt', 'w').close()
+    file = open('results_eomt.txt', 'a')
 
-    #print(torch.cuda.is_available())
     device = 0  # TODO: change to the GPU you want to use
     config_path = args.config  # TODO: change to the config file
 
@@ -347,6 +354,8 @@ def main():
         else:
             anomaly_score_to_test = args.anomalyScore.split(",")
 
+        res_dic = {}
+
         for anomalyScore in anomaly_score_to_test:
             if(anomalyScore == 'msp'):
                 description = 'msp temp: 1'
@@ -364,12 +373,15 @@ def main():
                 raise ValueError("Error: unknown --anomalyScore value")
             prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
             logResults(file, prc_auc, fpr, '(' + description +')')
-        
-        '''
-        for i in range(5):
-            plt.imshow(anomaly_score_list[i])
-            plt.show()
-        '''
+
+            if args.save_res_dict:
+                res_dic[anomalyScore] = {"prc_auc": prc_auc, "fpr@95": fpr}
+
+        if args.save_res_dict:
+            chars = string.ascii_letters + string.digits
+            f_name = "".join(secrets.choice(chars) for _ in range(20))
+            with open("./eval_res_dic/"+f_name+".pkl" , 'wb') as f:
+                pickle.dump(res_dic, f)
 
     file.write('\n')
     file.close()

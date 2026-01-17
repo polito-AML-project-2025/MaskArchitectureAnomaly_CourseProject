@@ -40,6 +40,9 @@ bold_green = "\033[1;32m"
 reset = "\033[0m"
 
 from peft import LoraConfig, get_peft_model, PeftModel
+import pickle
+import secrets
+import string
 
 class LightningModule(lightning.LightningModule):
     def __init__(
@@ -448,7 +451,7 @@ class LightningModule(lightning.LightningModule):
             else ""
         )
 
-    def _on_eval_epoch_end_semantic(self, log_prefix, log_per_class=False):
+    def _on_eval_epoch_end_semantic(self, log_prefix, log_per_class=False, save_res_dict = False):
         for i, metric in enumerate(self.metrics):  # type: ignore
             iou_per_class = metric.compute()
             metric.reset()
@@ -466,6 +469,14 @@ class LightningModule(lightning.LightningModule):
                 f"metrics/{log_prefix}_iou_all{block_postfix}",
                 iou_all,
             )
+
+        if save_res_dict:
+            res_dic = {}
+            res_dic['iou'] = {"iou_all": iou_all}
+            chars = string.ascii_letters + string.digits
+            f_name = "".join(secrets.choice(chars) for _ in range(20))
+            with open("./eval_res_dic/"+f_name+".pkl" , 'wb') as f:
+                pickle.dump(res_dic, f)
 
     def _on_eval_epoch_end_instance(self, log_prefix):
         for i, metric in enumerate(self.metrics):  # type: ignore

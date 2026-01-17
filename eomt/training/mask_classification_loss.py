@@ -37,6 +37,7 @@ class MaskClassificationLoss(Mask2FormerLoss):
         no_object_coefficient: float,
         rba_ood_supervision_enabled: bool = False,
         rba_coefficient:float = 1e-5,
+        rba_aplha:float = 5,
         ood_label_id: int=254
     ):
         nn.Module.__init__(self)
@@ -47,6 +48,7 @@ class MaskClassificationLoss(Mask2FormerLoss):
         self.dice_coefficient = dice_coefficient
         self.class_coefficient = class_coefficient
         self.rba_coefficient = rba_coefficient
+        self.rba_aplha = rba_aplha
         self.rba_ood_supervision_enabled = rba_ood_supervision_enabled
         self.ood_label_id = ood_label_id
         self.num_labels = num_labels
@@ -54,6 +56,8 @@ class MaskClassificationLoss(Mask2FormerLoss):
         empty_weight = torch.ones(self.num_labels + 1)
         empty_weight[-1] = self.eos_coef
         self.register_buffer("empty_weight", empty_weight)
+
+        print('rba_aplha: ', rba_aplha)
 
         self.matcher = Mask2FormerHungarianMatcher(
             num_points=num_points,
@@ -129,7 +133,7 @@ class MaskClassificationLoss(Mask2FormerLoss):
             masks_queries_logits.sigmoid(),
             class_queries_logits.softmax(dim=-1)[..., :-1],
         )
-        alpha = 5
+        alpha = self.rba_aplha
         rba_l = (torch.square(torch.clamp((alpha + pixel_logits.tanh().sum(dim=1)[ood_mask]), min=0))).sum()
         
         return {"loss_rba": rba_l}

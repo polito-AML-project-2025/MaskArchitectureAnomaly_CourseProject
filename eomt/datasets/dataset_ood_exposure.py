@@ -17,6 +17,8 @@ class CityscapesCocoOODDataset(Dataset):
         **kwargs
     ):
         super().__init__(*args, **kwargs)
+
+        print("ood_prob: ", ood_prob)
         
         self.ood_prob = ood_prob
         self.ood_label_id = ood_label_id
