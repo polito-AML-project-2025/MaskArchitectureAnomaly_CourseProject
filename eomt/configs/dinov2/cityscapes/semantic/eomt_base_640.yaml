@@ -1,11 +1,23 @@
 trainer:
-  #max_epochs: 107
+  #max_epochs: 10
+  #limit_train_batches: 500
+  #limit_val_batches: 200
   logger:
     class_path: lightning.pytorch.loggers.wandb.WandbLogger
     init_args:
       resume: allow
       project: "eomt"
       name: "cityscapes_semantic_eomt_base_640"
+  callbacks:
+    - class_path: utils.SaveLoRAWeightsCallback.SaveLoRAWeightsCallback
+    #- class_path: lightning.pytorch.callbacks.EarlyStopping
+    #  init_args:
+    #    strict: true
+    #    monitor: metrics/val_iou_all
+    #    min_delta: 0.00
+    #    patience: 5
+    #    verbose: true
+    #    mode: min
 model:
   class_path: training.mask_classification_semantic.MaskClassificationSemantic
   init_args:

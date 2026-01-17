@@ -101,6 +101,8 @@ for i in range(n_new_points):
         "main.py", "fit",
         "-c", r".\configs\dinov2\cityscapes\semantic\eomt_base_640_cocomix.yaml",
         "--trainer.devices", "1",
+        "--trainer.max_epochs 1",
+        "--trainer.limit_val_batches 0",
         "--data.batch_size", "1",
         "--data.path", r"..\..\Validation_Dataset",
         "--data.init_args.ood_coco_root", r"..\..\Validation_Dataset\COCO", 
