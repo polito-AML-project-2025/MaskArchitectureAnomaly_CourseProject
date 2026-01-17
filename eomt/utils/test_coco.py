@@ -3,9 +3,16 @@ import numpy as np
 from pathlib import Path
 import random
 import matplotlib.patches as mpatches
+import os
+import sys
 
-from eomt.datasets.dataset_ood_exposure import CityscapesCocoOODDataset
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+os.chdir("../")
+
+from datasets.dataset_ood_exposure import CityscapesCocoOODDataset
 from datasets.cityscapes_semantic import CityscapesSemantic
+
 
 CITYSCAPES_ROOT = "../../Validation_Dataset/" 
 COCO_ROOT = "../../Validation_Dataset/COCO"              
@@ -35,8 +42,8 @@ COLORS = np.array([
     [107, 142, 35],  # 8: Vegetation
     [152, 251, 152], # 9: Terrain
     [70, 130, 180],  # 10: Sky
-    [220, 100, 60],   # 11: Person
-    [255, 0, 0],     # 12: Rider
+    [220, 100, 60],  # 11: Person
+    [200, 0, 200],   # 12: Rider
     [0, 0, 142],     # 13: Car
     [0, 0, 70],      # 14: Truck
     [0, 60, 100],    # 15: Bus
@@ -99,8 +106,6 @@ def main():
         target_parser=target_parser,
         check_empty_targets=True,
         transforms=None,
-        
-        ood_enabled=True,
         ood_prob=1.0, # Force injection
         ood_coco_root=COCO_ROOT,
         ood_label_id=OOD_LABEL_ID
