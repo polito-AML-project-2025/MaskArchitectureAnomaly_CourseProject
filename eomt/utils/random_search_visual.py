@@ -46,7 +46,7 @@ x = np.array([r[0] for r in results])
 y = np.array([r[1] for r in results])
 z = np.array([r[2] for r in results])
 
-grid_x, grid_y = np.mgrid[min(x):max(x):500j, min(y):max(y):500j]
+grid_x, grid_y = np.mgrid[min(x):max(x):50j, min(y):max(y):50j]
 
 
 grid_z = griddata((x, y), z, (grid_x, grid_y), method='cubic') #linear
