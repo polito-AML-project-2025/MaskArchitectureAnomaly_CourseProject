@@ -63,7 +63,7 @@ img = plt.imshow(
 
 
 cbar = plt.colorbar(img)
-cbar.set_label(args.score + " -> ", args.metric)
+cbar.set_label(args.score + " -> " + args.metric)
 
 plt.scatter(x, y, c='black', s=20, marker='x', label='Real combination')
 
