@@ -73,11 +73,12 @@ plt.xlabel('OOD_prob')
 plt.ylabel('RBA_alpha')
 plt.legend()
 
-plt.show()
 if args.save_path is not None:
     output_file = args.save_path + "/figure.png"
     plt.savefig(output_file)
     print(f"Plot saved to {output_file}")
+
+plt.show()
 
 '''
 from mpl_toolkits.mplot3d import Axes3D  # Import for 3D plotting
