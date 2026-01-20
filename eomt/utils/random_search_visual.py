@@ -63,16 +63,20 @@ img = plt.imshow(
 
 
 cbar = plt.colorbar(img)
-cbar.set_label('Eval Metric')
+cbar.set_label(args.score + " -> ", args.metric)
 
 plt.scatter(x, y, c='black', s=20, marker='x', label='Real combination')
 
 plt.title('Random Search Results')
-plt.xlabel('Par 1')
-plt.ylabel('Par 2')
+plt.xlabel('OOD_prob')
+plt.ylabel('RBA_alpha')
 plt.legend()
 
 plt.show()
+
+output_file = HISTORY_FILE + "/figure.png"
+plt.savefig(output_file)
+print(f"Plot saved to {output_file}")
 
 '''
 from mpl_toolkits.mplot3d import Axes3D  # Import for 3D plotting
