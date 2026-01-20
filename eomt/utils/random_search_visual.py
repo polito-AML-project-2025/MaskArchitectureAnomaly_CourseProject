@@ -3,8 +3,22 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 import pickle
 import os
+import argparse
 
 os.chdir("../")
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--history_path', type=str, default=r".\lora_weights\par_to_weights.pkl")
+parser.add_argument('--dataset', type=str)
+parser.add_argument('--score', type=str)
+parser.add_argument('--metric', type=str)
+
+args = parser.parse_args()
+
+DATASET_NAME = args.dataset
+SCORE_NAME = args.score
+METRIC_NAME = args.metric
 
 def load_pickle(path):
     if not os.path.exists(path):
@@ -13,15 +27,9 @@ def load_pickle(path):
     with open(path, "rb") as f:
         return pickle.load(f)
     
-lora_path = ".\lora_weights"
-par_to_weights_path = lora_path + "\par_to_weights.pkl"
-HISTORY_FILE = par_to_weights_path
+HISTORY_FILE = args.history_path
 
 res_dict = load_pickle(HISTORY_FILE)
-
-DATASET_NAME = "Cityscapes" #"RoadAnomaly21"
-SCORE_NAME = 'iou'
-METRIC_NAME = 'iou_all'#'fpr@95'
 
 results = []
 

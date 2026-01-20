@@ -20,14 +20,14 @@ CONFIG_PATH = "./configs/dinov2/cityscapes/semantic/eomt_base_640.yaml"
 LOAD_WEIGHTS = "../../epoch_106-step_19902_eomt.ckpt"
 
 DATASETS_TO_TEST = {
-    "fs_static": r"..\..\Validation_Dataset\fs_static\images\*.jpg",
-    "RoadAnomaly21": r"..\..\Validation_Dataset\RoadAnomaly21\images\*.png",
+#    "fs_static": r"..\..\Validation_Dataset\fs_static\images\*.jpg",
+#    "RoadAnomaly21": r"..\..\Validation_Dataset\RoadAnomaly21\images\*.png",
     'RoadAnomaly': r'..\..\Validation_Dataset\RoadAnomaly\images\*.jpg',
-    'RoadObstacle21': r'..\..\Validation_Dataset\RoadObsticle21\images\*.webp',
-    'FS_LostFound': r'..\..\Validation_Dataset\FS_LostFound_full\images\*.png',
+#    'RoadObstacle21': r'..\..\Validation_Dataset\RoadObsticle21\images\*.webp',
+#    'FS_LostFound': r'..\..\Validation_Dataset\FS_LostFound_full\images\*.png',
 }
 
-SCORES_TO_CHECK = ["msp", "ml" , "me", "rba"]
+SCORES_TO_CHECK = ["rba"]#["msp", "ml" , "me", "rba"]
 
 
 def get_latest_file(directory, extension="*.pkl"):
