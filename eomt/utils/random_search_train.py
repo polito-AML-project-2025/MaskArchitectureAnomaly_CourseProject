@@ -107,7 +107,7 @@ for i in range(n_new_points):
         "--data.path", r"..\..\Validation_Dataset",
         "--data.init_args.ood_coco_root", r"..\..\Validation_Dataset\COCO", 
         "--model.init_args.lora_enabled", "True",
-        "--model.init_args.lora_modules_to_save", "['class_head', 'mask_head']",
+        "--model.init_args.modules_to_train", "['class_head', 'mask_head']",
         "--model.ckpt_path", r"..\..\epoch_106-step_19902_eomt.ckpt",
         "--model.load_ckpt_class_head", "False",
         "--model.network.masked_attn_enabled", "False",
