@@ -10,6 +10,7 @@ os.chdir("../")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--history_path', type=str, default=r".\lora_weights\par_to_weights.pkl")
+parser.add_argument('--save_path', type=str, default=None)
 parser.add_argument('--dataset', type=str)
 parser.add_argument('--score', type=str)
 parser.add_argument('--metric', type=str)
@@ -73,10 +74,10 @@ plt.ylabel('RBA_alpha')
 plt.legend()
 
 plt.show()
-
-output_file = HISTORY_FILE + "/figure.png"
-plt.savefig(output_file)
-print(f"Plot saved to {output_file}")
+if args.save_path is not None:
+    output_file = args.save_path + "/figure.png"
+    plt.savefig(output_file)
+    print(f"Plot saved to {output_file}")
 
 '''
 from mpl_toolkits.mplot3d import Axes3D  # Import for 3D plotting
