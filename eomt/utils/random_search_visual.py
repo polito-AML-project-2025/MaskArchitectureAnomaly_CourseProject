@@ -68,7 +68,7 @@ cbar.set_label(args.score + " -> " + args.metric)
 
 plt.scatter(x, y, c='black', s=20, marker='x', label='Real combination')
 
-plt.title('Random Search Results')
+plt.title('Random Search Results on ' + DATASET_NAME)
 plt.xlabel('OOD_prob')
 plt.ylabel('RBA_alpha')
 plt.legend()
