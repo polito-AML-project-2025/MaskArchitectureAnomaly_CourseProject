@@ -1609,3 +1609,42 @@
 
     AUPRC score:86.29781460186787   FPR@TPR95:7.454548357283257   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
 (rba)
+
+    AUPRC score:85.40284509364918   FPR@TPR95:9.565381535924788   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:92.58560694566644   FPR@TPR95:2.3515088394619865   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:95.60824794528982   FPR@TPR95:0.7503385471342949   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:27.493480939572468   FPR@TPR95:5.140915770973205   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(rba)
+
+    AUPRC score:93.97644326922324   FPR@TPR95:1.086190477767623   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:89.15300743420151   FPR@TPR95:3.171436568392415   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:73.77485607432457   FPR@TPR95:11.72129074645761   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:15.749867139283047   FPR@TPR95:6.944295066946135   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(rba)
+
+    AUPRC score:19.55026716934553   FPR@TPR95:7.133971036022572   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(rba)
+
+    AUPRC score:75.05925453895502   FPR@TPR95:9.659745122037881   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:65.2423286058941   FPR@TPR95:87.79321083855794   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:60.381142053872814   FPR@TPR95:95.38070734832378   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:92.44884290288816   FPR@TPR95:1.5798262496460824   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)

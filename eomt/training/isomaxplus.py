@@ -41,10 +41,9 @@ class IsoMaxPlusLossSecondPart(nn.Module):
         
         loss = -torch.log(probabilities_at_targets + 1e-9)
         
-        # 5. Apply Class Weights (CRITICAL FOR MASK2FORMER)
         if weights is not None:
             loss = loss * weights
-            return loss.sum() / weights.sum() # Weighted Mean
+            return loss.sum() / weights.sum() 
         else:
             return loss.mean()
 
