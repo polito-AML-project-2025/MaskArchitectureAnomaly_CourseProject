@@ -31,10 +31,14 @@ def load_pickle(path):
 HISTORY_FILE = args.history_path
 
 res_dict = load_pickle(HISTORY_FILE)
+#print(res_dict)
 
 results = []
 
 for comb in res_dict:
+    if DATASET_NAME not in comb[3]:
+        continue
+
     if comb[3] is not None:
         results.append((comb[0], comb[1], comb[3][DATASET_NAME][SCORE_NAME][METRIC_NAME]))
     else:
@@ -45,11 +49,28 @@ for comb in res_dict:
 x = np.array([r[0] for r in results])
 y = np.array([r[1] for r in results])
 z = np.array([r[2] for r in results])
+'''
+n_div = 10
+ps = [[] for _ in range(n_div)]
+
+for r in results:
+    ps[min(int(r[0]*n_div), n_div -1)].append(r[2])
+
+psm = np.zeros(n_div)
+
+for i in range(n_div):
+    psm[i] = np.array(ps[i]).mean()
+
+plt.plot(range(n_div), psm)
+plt.show()
+
+exit()
+'''
 
 grid_x, grid_y = np.mgrid[min(x):max(x):50j, min(y):max(y):50j]
 
 
-grid_z = griddata((x, y), z, (grid_x, grid_y), method='cubic') #linear
+grid_z = griddata((x, y), z, (grid_x, grid_y), method='linear') #linear
 
 
 plt.figure(figsize=(10, 8))
@@ -69,7 +90,7 @@ cbar.set_label(args.score + " -> " + args.metric)
 plt.scatter(x, y, c='black', s=20, marker='x', label='Real combination')
 
 plt.title('Random Search Results on ' + DATASET_NAME)
-plt.xlabel('OOD_prob')
+plt.xlabel('RBA_loss_coeff (10^-(x))')
 plt.ylabel('RBA_alpha')
 plt.legend()
 

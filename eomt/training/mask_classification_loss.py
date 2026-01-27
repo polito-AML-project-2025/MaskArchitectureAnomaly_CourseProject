@@ -58,6 +58,7 @@ class MaskClassificationLoss(Mask2FormerLoss):
         self.register_buffer("empty_weight", empty_weight)
 
         print('rba_aplha: ', rba_aplha)
+        print('rba_coeff: ', rba_coefficient)
 
         self.matcher = Mask2FormerHungarianMatcher(
             num_points=num_points,

@@ -609,3 +609,1003 @@
     AUPRC score:70.51089062065256   FPR@TPR95:13.825061348445816   (rba)
 
     AUPRC score:68.99703589274002   FPR@TPR95:17.086085531682578   (rba)
+
+    AUPRC score:67.91738898078223   FPR@TPR95:13.468144732449893   (msp temp: 1)
+    AUPRC score:67.7290375137738   FPR@TPR95:13.26434148310991   (ml)
+    AUPRC score:69.03717025933138   FPR@TPR95:13.021561725337321   (me)
+    AUPRC score:67.54322236079113   FPR@TPR95:95.13407283288716   (rba)
+
+    AUPRC score:85.44227847985657   FPR@TPR95:3.9435624189211502   (msp temp: 1)
+    AUPRC score:85.36617449323458   FPR@TPR95:4.0639758718861385   (ml)
+    AUPRC score:85.32202670484448   FPR@TPR95:4.0576812795893975   (me)
+    AUPRC score:85.01462137318487   FPR@TPR95:99.81197547318065   (rba)
+
+    AUPRC score:67.91738898078223   FPR@TPR95:13.468144732449893   (msp temp: 1)
+    AUPRC score:67.7290375137738   FPR@TPR95:13.26434148310991   (ml)
+    AUPRC score:69.03717025933138   FPR@TPR95:13.021561725337321   (me)
+    AUPRC score:67.54322236079113   FPR@TPR95:95.13407283288716   (rba)
+
+    AUPRC score:58.17776384475452   FPR@TPR95:41.152797820487294   (msp temp: 1)
+    AUPRC score:58.27255890313302   FPR@TPR95:46.35722131716784   (ml)
+    AUPRC score:56.81639614381162   FPR@TPR95:41.7541660307321   (me)
+    AUPRC score:60.56055173376825   FPR@TPR95:77.47801300201398   (rba)
+
+    AUPRC score:58.17776384475452   FPR@TPR95:41.152797820487294   (msp temp: 1)
+    AUPRC score:58.27255890313302   FPR@TPR95:46.35722131716784   (ml)
+    AUPRC score:56.81639614381162   FPR@TPR95:41.7541660307321   (me)
+    AUPRC score:60.56055173376825   FPR@TPR95:77.47801300201398   (rba)
+
+    AUPRC score:67.91738898078223   FPR@TPR95:13.468144732449893   (msp temp: 1)
+    AUPRC score:67.7290375137738   FPR@TPR95:13.26434148310991   (ml)
+    AUPRC score:69.03717025933138   FPR@TPR95:13.021561725337321   (me)
+    AUPRC score:67.54322236079113   FPR@TPR95:95.13407283288716   (rba)
+
+    AUPRC score:72.25468250355671   FPR@TPR95:11.383495476395574   (msp temp: 1)
+    AUPRC score:71.87971833102613   FPR@TPR95:11.265280522680921   (ml)
+    AUPRC score:73.61300352362294   FPR@TPR95:11.076743399144473   (me)
+    AUPRC score:61.02683611760651   FPR@TPR95:97.39961735163375   (rba)
+
+    AUPRC score:92.23906873470824   FPR@TPR95:2.3340076528548592   (msp temp: 1)
+    AUPRC score:92.53132326507598   FPR@TPR95:2.329313994657439   (ml)
+    AUPRC score:88.2499378034021   FPR@TPR95:2.328364102703464   (me)
+    AUPRC score:92.41727249396574   FPR@TPR95:2.3292409280731965   (rba)
+
+    AUPRC score:85.44227847985657   FPR@TPR95:3.9435624189211502   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(msp temp: 1)
+    AUPRC score:85.36617449323458   FPR@TPR95:4.0639758718861385   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(ml)
+    AUPRC score:85.32202670484448   FPR@TPR95:4.0576812795893975   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(me)
+    AUPRC score:85.01462137318487   FPR@TPR95:99.81197547318065   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:16.364746886018334   FPR@TPR95:12.966757102706813   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(msp temp: 1)
+    AUPRC score:16.346678545244252   FPR@TPR95:12.7374768245909   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(ml)
+    AUPRC score:19.008434945080964   FPR@TPR95:12.793299469375402   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(me)
+    AUPRC score:16.482440214685695   FPR@TPR95:9.094453807487012   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(rba)
+
+    AUPRC score:58.17776384475452   FPR@TPR95:41.152797820487294   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(msp temp: 1)
+    AUPRC score:67.80004926028082   FPR@TPR95:23.89247000029748   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(msp temp: 1)
+    AUPRC score:67.25749743970329   FPR@TPR95:23.59097046082296   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(ml)
+    AUPRC score:70.89225970492473   FPR@TPR95:23.380619882206073   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(me)
+    AUPRC score:66.42034050930441   FPR@TPR95:21.219789689421113   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:67.4508190673254   FPR@TPR95:14.399821196640769   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(msp temp: 1)
+    AUPRC score:66.67875697088917   FPR@TPR95:14.365114249312988   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(ml)
+    AUPRC score:69.11060048063786   FPR@TPR95:14.30331170898122   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(me)
+    AUPRC score:65.5993747495264   FPR@TPR95:14.499622026592816   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:93.55512855744327   FPR@TPR95:2.2547915297272265   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(msp temp: 1)
+    AUPRC score:93.32154951384992   FPR@TPR95:2.1321604140263783   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(ml)
+    AUPRC score:82.28590323179355   FPR@TPR95:2.5734175202788547   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(me)
+    AUPRC score:93.50704353038323   FPR@TPR95:2.0772945879407083   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:91.40567006943976   FPR@TPR95:0.7522044571624991   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(ml)
+    AUPRC score:93.54944262927202   FPR@TPR95:0.7340367399262983   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:25.024927585349644   FPR@TPR95:25.00788822776862   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(ml)
+    AUPRC score:25.039951700514635   FPR@TPR95:51.604272785958614   ..\..\Validation_Dataset\FS_LostFound_full\images\*.png
+(rba)
+
+    AUPRC score:64.73897045967688   FPR@TPR95:73.7223962529018   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(ml)
+    AUPRC score:66.49936953746065   FPR@TPR95:53.967698951107415   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:76.96471691392412   FPR@TPR95:11.778326388371756   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(ml)
+    AUPRC score:77.37840537717753   FPR@TPR95:10.967596715478926   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:77.96919282402963   FPR@TPR95:9.238574606404773   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(ml)
+    AUPRC score:78.04290704134323   FPR@TPR95:8.915722292939524   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:62.441121978156325   FPR@TPR95:62.64634732284867   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:66.47638248077422   FPR@TPR95:61.11673009743171   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:61.524505166793084   FPR@TPR95:65.41414714368648   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:59.65161686449548   FPR@TPR95:64.7779411895443   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:66.35957109391603   FPR@TPR95:19.615516537001525   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:65.69491357189494   FPR@TPR95:59.11455614181972   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:67.62882786031898   FPR@TPR95:47.042135269808234   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:66.42757235690499   FPR@TPR95:25.34096280539394   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:66.53883402068523   FPR@TPR95:36.85125475425679   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:69.83552477887419   FPR@TPR95:23.218464177698323   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:70.43268277429576   FPR@TPR95:8.468709338927257   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:72.19829362323468   FPR@TPR95:12.366078227422568   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:71.12530079596142   FPR@TPR95:12.440661743860566   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.60957439985933   FPR@TPR95:5.433224310162467   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:76.24816676262263   FPR@TPR95:5.375819656628435   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:74.9418122751136   FPR@TPR95:5.438661813935687   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:76.72901761005345   FPR@TPR95:5.454322382614444   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.01407822561657   FPR@TPR95:5.450334608688861   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:75.45314081990817   FPR@TPR95:6.202816740841121   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:75.36165402239153   FPR@TPR95:6.714486252638929   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.4183551824497   FPR@TPR95:5.053191140111131   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:80.18169810348478   FPR@TPR95:4.439025728085415   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.81382308527836   FPR@TPR95:5.222159332805852   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:79.13063753569543   FPR@TPR95:5.045575845769197   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:61.96725439414552   FPR@TPR95:72.85355344764639   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:65.45671178223262   FPR@TPR95:25.721507884060852   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:64.53508507011851   FPR@TPR95:36.14067344628856   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:63.81397672478359   FPR@TPR95:29.88349343406019   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:67.90892214382951   FPR@TPR95:16.154424858136277   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:68.32039220499506   FPR@TPR95:33.13378368508301   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:68.8661386749682   FPR@TPR95:57.65977471283615   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:66.74219811568754   FPR@TPR95:58.17813942630091   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:71.27932080701788   FPR@TPR95:10.038266476383084   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:73.04834450821409   FPR@TPR95:12.381198996891532   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:71.57416289200708   FPR@TPR95:8.105097918356444   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:72.0012338838831   FPR@TPR95:14.05698675946331   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:72.20768268980584   FPR@TPR95:15.197971795985174   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.36062658340819   FPR@TPR95:5.618680492499086   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:75.73494452068157   FPR@TPR95:5.312316840869575   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:74.43316951181254   FPR@TPR95:5.403953131483292   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:76.46122671022472   FPR@TPR95:5.686589441097476   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.3016652749746   FPR@TPR95:5.254866865119865   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:75.823064473588   FPR@TPR95:6.128978426218599   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:75.61093076030741   FPR@TPR95:6.382595153556024   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.53100040413447   FPR@TPR95:4.6807970876176626   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:79.76856965800117   FPR@TPR95:4.342175639506632   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.22348678018119   FPR@TPR95:5.0471359758857925   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.62412652175114   FPR@TPR95:4.852579906116773   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:61.973053635732064   FPR@TPR95:72.81407876841558   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:65.45887661636449   FPR@TPR95:25.718058553552304   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:64.53025088516029   FPR@TPR95:35.33748132322702   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:63.82750090294231   FPR@TPR95:29.87839894585948   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:67.98801416749896   FPR@TPR95:15.98363054538372   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:68.32682960122204   FPR@TPR95:33.1939266628506   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:68.7641800200782   FPR@TPR95:55.855096664248116   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:66.74711507310452   FPR@TPR95:60.5366308880976   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:70.58794515074962   FPR@TPR95:12.371968372298522   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:72.89049086632187   FPR@TPR95:11.271915107074024   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:71.06081239329794   FPR@TPR95:8.395461084689613   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:71.35946729373495   FPR@TPR95:14.186589702571792   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:73.1350227152036   FPR@TPR95:13.956842094437185   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:80.3499693382672   FPR@TPR95:5.414667768112719   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.41009410587803   FPR@TPR95:4.4534190178873425   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:74.9970247402391   FPR@TPR95:5.548496136252061   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.41668303446633   FPR@TPR95:5.216772380734735   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:80.75667137464163   FPR@TPR95:4.335604499287425   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:74.46008217394493   FPR@TPR95:6.140877250996115   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:76.2377965828002   FPR@TPR95:5.92903191805418   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.81502055638879   FPR@TPR95:4.800746979840853   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.82616032875767   FPR@TPR95:3.1771826118646707   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:82.43326915130618   FPR@TPR95:3.599983684002356   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:84.4249513987775   FPR@TPR95:3.132235757101512   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.56081290770344   FPR@TPR95:3.1257570044758016   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:82.737075676601   FPR@TPR95:3.171122218152907   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:80.49770006190067   FPR@TPR95:4.144847360878665   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.28805898469855   FPR@TPR95:3.3143839987477124   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:81.182567200856   FPR@TPR95:3.7049394765388675   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:81.8373689754373   FPR@TPR95:3.8596857903755715   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.75896590296482   FPR@TPR95:3.3920825459324675   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:81.34251347725652   FPR@TPR95:3.9320450319210756   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:82.00864089809434   FPR@TPR95:3.6346348421040826   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:80.83578732554075   FPR@TPR95:3.7120928329133185   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:86.2768199222567   FPR@TPR95:2.556852797452752   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:84.30074740653913   FPR@TPR95:2.7437343053670276   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:84.9720808975394   FPR@TPR95:3.128990570248185   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.45925173403681   FPR@TPR95:3.2331009291460955   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:84.10011744868643   FPR@TPR95:3.3277052438326487   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.79131887366566   FPR@TPR95:3.149382662032877   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:84.8358977545643   FPR@TPR95:2.9723500202177755   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.12768120255772   FPR@TPR95:3.137128232178506   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.67680249598502   FPR@TPR95:2.9366703964525955   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:86.44475424516345   FPR@TPR95:2.592776463917735   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.61128684044543   FPR@TPR95:2.8748270710523927   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.74313940925892   FPR@TPR95:2.7483072007180898   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.40154767548594   FPR@TPR95:2.7046874733986193   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:85.40600576771884   FPR@TPR95:2.720439848616827   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:69.5137899306788   FPR@TPR95:92.96703682236904   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:68.16613152474264   FPR@TPR95:93.8757821676362   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:67.95525831053067   FPR@TPR95:19.399269450136256   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:65.24198020847741   FPR@TPR95:97.22491373358937   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:71.78559772972142   FPR@TPR95:23.715734453996877   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:64.38459607486826   FPR@TPR95:99.83620907365199   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:55.01559523058324   FPR@TPR95:96.99373917954924   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:61.205892236757954   FPR@TPR95:89.12841133239525   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:63.42693755434039   FPR@TPR95:85.85783276475463   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.1721683569459   FPR@TPR95:90.05830112076474   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:65.51586997329105   FPR@TPR95:92.317582168738   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:57.5714764741733   FPR@TPR95:99.10413408993975   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:63.00504890068108   FPR@TPR95:89.76704554353832   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.16458763115828   FPR@TPR95:91.32534024685815   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:60.53937797334821   FPR@TPR95:83.76496440747773   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:60.79458543214321   FPR@TPR95:89.33398648674117   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:61.5344163097729   FPR@TPR95:86.61932356859216   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:56.69392940937301   FPR@TPR95:94.70410787875238   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:59.038594898629256   FPR@TPR95:94.58968393257759   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:63.78351792356529   FPR@TPR95:95.11932469079352   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:65.88323831156315   FPR@TPR95:18.204742167434006   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.53829892834556   FPR@TPR95:89.67933460429637   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:59.17899091733487   FPR@TPR95:95.86916326293328   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.66160354759853   FPR@TPR95:96.30771064124916   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.17025943663052   FPR@TPR95:95.2058712624775   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:66.6839658567626   FPR@TPR95:22.867053601102782   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:68.07941707389531   FPR@TPR95:13.275491853607422   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:68.38198311213661   FPR@TPR95:92.19870109649167   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:75.10147514774638   FPR@TPR95:9.483451143535536   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:72.61919891046172   FPR@TPR95:10.132920874398252   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.81880313120776   FPR@TPR95:10.503404119969533   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:72.09261128570473   FPR@TPR95:11.807832563862949   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:71.29122659297123   FPR@TPR95:12.054284412838959   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:74.40787197969442   FPR@TPR95:12.11180465635988   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:70.48642454032252   FPR@TPR95:12.258635991845535   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.3199382087527   FPR@TPR95:12.744856416913288   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:71.54036963176989   FPR@TPR95:11.90953005272548   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:71.07112252436868   FPR@TPR95:12.340448820192124   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:71.86154433761385   FPR@TPR95:11.971484315764783   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:70.5236499818602   FPR@TPR95:11.454736265874223   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:67.31446098329155   FPR@TPR95:13.155418133676475   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:68.09009445332278   FPR@TPR95:11.617585621933225   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:68.71240846054431   FPR@TPR95:11.825519316398315   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.25142805074651   FPR@TPR95:11.23152012780245   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:67.77778722978637   FPR@TPR95:19.273146957487103   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.04759574907904   FPR@TPR95:11.21401513327787   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.80648996949085   FPR@TPR95:11.027964414812084   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:70.13041480420011   FPR@TPR95:10.802440776892434   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:93.49195956302988   FPR@TPR95:1.064537498700618   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.44424945601659   FPR@TPR95:3.1880459983301668   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:76.7948535283059   FPR@TPR95:3.376653236764475   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.08452093071004   FPR@TPR95:1.1935344024379169   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:94.11781003705997   FPR@TPR95:0.7996669165780124   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:94.13578518034895   FPR@TPR95:0.782705948941735   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:79.39966227360004   FPR@TPR95:3.154431440648554   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:92.53758866331535   FPR@TPR95:0.9344714555165649   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.77831870975363   FPR@TPR95:0.985592590584728   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:89.60946505169579   FPR@TPR95:1.5147062164590184   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.49509378857029   FPR@TPR95:2.591852587982768   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:92.25779826268912   FPR@TPR95:1.1297782471145001   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.43108765858106   FPR@TPR95:2.650756942012491   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.15974871716509   FPR@TPR95:1.1103303681564254   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:79.23988316652   FPR@TPR95:3.1333019912780298   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.18086928290555   FPR@TPR95:0.9517810555811317   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.2115864602278   FPR@TPR95:1.0496537992828978   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:89.78482302980912   FPR@TPR95:1.4806215860532619   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.25880115664495   FPR@TPR95:1.037695706992573   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.88412896675551   FPR@TPR95:2.7075288276891776   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.42301107162758   FPR@TPR95:1.031902598142498   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:81.78327468173676   FPR@TPR95:2.7825835789594056   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:79.84207965216612   FPR@TPR95:3.1101208400670233   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.16374398488374   FPR@TPR95:1.1232965892185538   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:91.6662663988865   FPR@TPR95:1.1330176234273555   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.32852593669773   FPR@TPR95:1.1472941213658046   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:89.50714201897398   FPR@TPR95:1.5532155734338138   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.3607718852445   FPR@TPR95:1.0027569271375074   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.06392078282653   FPR@TPR95:1.0754671253274892   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:92.01981644357429   FPR@TPR95:1.0160165804934462   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:92.88130506021581   FPR@TPR95:1.0854292969658577   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:88.2998025846037   FPR@TPR95:1.7239263472159347   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.73049624684995   FPR@TPR95:0.8513516740719099   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:78.31477277616392   FPR@TPR95:3.1984207183420112   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.19966986365384   FPR@TPR95:0.8803230288627558   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:92.25452316087203   FPR@TPR95:0.9969783446386113   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:77.06562788517171   FPR@TPR95:3.379323180111124   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.2632126308671   FPR@TPR95:1.00108930202219   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.82517577002446   FPR@TPR95:0.8150067434227443   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.27798135818159   FPR@TPR95:2.7053121064993046   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.07249430800655   FPR@TPR95:1.1173146378031555   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:92.90303698119051   FPR@TPR95:1.08290171186076   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:83.05967385883066   FPR@TPR95:2.7689694826347058   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:80.41994845879388   FPR@TPR95:3.071300619177003   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:89.27141881036478   FPR@TPR95:1.6385201180957487   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:90.91110985734622   FPR@TPR95:1.2878569059116032   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.46319787609305   FPR@TPR95:1.0143780080804863   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.21037333018083   FPR@TPR95:1.029947351273842   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:93.50523112515889   FPR@TPR95:1.0389856469772436   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:91.14672460223218   FPR@TPR95:1.205899232561246   ..\..\Validation_Dataset\fs_static\images\*.jpg
+(rba)
+
+    AUPRC score:77.57711725262793   FPR@TPR95:8.417811718791523   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:68.02266693863797   FPR@TPR95:15.82185275087689   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:67.8890173095348   FPR@TPR95:16.419174725693022   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.35481605036998   FPR@TPR95:8.735532239283442   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:72.73503833983082   FPR@TPR95:9.343863051574568   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.86984196125108   FPR@TPR95:10.044899719821608   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:66.53458037450304   FPR@TPR95:15.19230101787867   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:73.06720222160388   FPR@TPR95:10.853151272784931   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:77.06224541524406   FPR@TPR95:8.278656536233555   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.81528531268513   FPR@TPR95:12.511336772905823   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:68.35509686714836   FPR@TPR95:15.877001888011351   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:74.33728263862797   FPR@TPR95:8.828767824852719   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:69.16547935034465   FPR@TPR95:15.886582798205797   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.05747466017196   FPR@TPR95:8.257628677242764   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:67.77390509332209   FPR@TPR95:16.258774588154328   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:73.29419392513405   FPR@TPR95:9.222528214757693   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:77.0246603692982   FPR@TPR95:8.233220915876142   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.35919221731089   FPR@TPR95:12.829105718118663   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:76.01025414869717   FPR@TPR95:8.404224229141372   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:66.49662859246136   FPR@TPR95:14.929315697859613   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:74.92264202977093   FPR@TPR95:8.678025413075156   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:69.07433113977147   FPR@TPR95:16.169040800493168   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:68.16307230028289   FPR@TPR95:15.526220694630943   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.16750301232406   FPR@TPR95:8.63039413443596   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.23056913010277   FPR@TPR95:11.833521709556384   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.28417219248965   FPR@TPR95:8.587788895811196   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.23625217207716   FPR@TPR95:13.474813326243973   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:75.73475355343339   FPR@TPR95:8.405520122853545   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.91373328842492   FPR@TPR95:8.228598894969393   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:72.64983281427236   FPR@TPR95:11.205992672699589   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:73.78501525631873   FPR@TPR95:9.25836844742474   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:70.33170107177604   FPR@TPR95:13.234772462089357   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:72.8970395618543   FPR@TPR95:10.227893135385656   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:66.72078404301973   FPR@TPR95:15.378073993221278   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:73.64820120194237   FPR@TPR95:9.882988952224004   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.74389839393199   FPR@TPR95:11.977487082077474   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:66.31767280402515   FPR@TPR95:16.55138727890257   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:74.77049783935851   FPR@TPR95:8.803316296033572   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:74.44658630911496   FPR@TPR95:9.371739336815727   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:68.00869959625501   FPR@TPR95:15.792486004592599   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.46978729691895   FPR@TPR95:8.105213063923907   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:75.30464020787615   FPR@TPR95:8.533650908396368   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:67.45666158012557   FPR@TPR95:15.299765869031745   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:67.12499329359703   FPR@TPR95:16.232133581711196   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:70.01244268365116   FPR@TPR95:13.338343461183474   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.2331869231759   FPR@TPR95:12.500197800103177   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:78.50340776103538   FPR@TPR95:8.123540703567496   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:76.6131452622524   FPR@TPR95:8.423322749231634   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:77.64644444630069   FPR@TPR95:8.174532798800978   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:71.23143864020923   FPR@TPR95:11.91273607778409   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)
+
+    AUPRC score:66.48019481878254   FPR@TPR95:94.75074191165346   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.804692371254724   FPR@TPR95:89.49084300170107   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:62.500192827545774   FPR@TPR95:89.5761705126655   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.11890644551991   FPR@TPR95:94.88989126706446   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:66.7968447436326   FPR@TPR95:89.5070765740444   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:64.78297050066068   FPR@TPR95:93.82137269109352   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:63.37965459556384   FPR@TPR95:85.48621713021818   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:67.54603752334259   FPR@TPR95:82.8839079453709   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:66.78915014113763   FPR@TPR95:94.95890573527707   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:73.3020836655294   FPR@TPR95:10.833053523982409   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.10049141186306   FPR@TPR95:20.251810065153936   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:65.00758984114835   FPR@TPR95:94.62435592540443   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:69.6977744608078   FPR@TPR95:14.800940855499523   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:67.21929551479235   FPR@TPR95:94.74971687786561   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:61.28725242716334   FPR@TPR95:93.57082600631598   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:65.62476229677048   FPR@TPR95:93.98392721152779   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:70.1597314760137   FPR@TPR95:94.76029086299465   ..\..\Validation_Dataset\RoadAnomaly21\images\*.png
+(rba)
+
+    AUPRC score:96.17859801501794   FPR@TPR95:0.08984624601207337   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:86.76114715428068   FPR@TPR95:3.4639943019232353   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:87.59394129388369   FPR@TPR95:3.465282920969201   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.05443349957106   FPR@TPR95:0.08356358126588036   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:95.71482160403113   FPR@TPR95:0.095300882455638   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:95.10847661440326   FPR@TPR95:0.1051699447875903   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:85.93061144643089   FPR@TPR95:3.4862579129101565   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:94.54473157366105   FPR@TPR95:0.11229098819019459   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.39820646036684   FPR@TPR95:0.08844894825138795   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:93.14091425137482   FPR@TPR95:0.13806854428639512   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:88.9343190274346   FPR@TPR95:3.441725515759423   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.20398180164204   FPR@TPR95:0.09521807962537515   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:88.5677556911645   FPR@TPR95:3.4806997729287636   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.21630345151002   FPR@TPR95:0.08811256175344515   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:86.18909613326205   FPR@TPR95:3.5227843114098523   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.24344903980922   FPR@TPR95:0.09834388646779739   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.32620999228632   FPR@TPR95:0.08722243132811962   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:93.1924329331338   FPR@TPR95:0.1312942377355165   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.8887947947836   FPR@TPR95:0.07529882377027058   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:87.73026853739658   FPR@TPR95:3.4433712220108963   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.64810152102422   FPR@TPR95:0.08108467153488658   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:88.4828939045085   FPR@TPR95:3.477465287371621   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:87.74986049819023   FPR@TPR95:3.4392414308515376   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.1611302599114   FPR@TPR95:0.0813900069714808   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:93.07039940821073   FPR@TPR95:0.13174965330196212   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.22565307652262   FPR@TPR95:0.08556119954597138   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:92.06904449845456   FPR@TPR95:0.23687819667442098   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.75615882605275   FPR@TPR95:0.07593537052791617   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:96.1720022822454   FPR@TPR95:0.0781762221219043   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:94.11071631653466   FPR@TPR95:0.1126325498650288   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:95.99453648699064   FPR@TPR95:0.10124716070388823   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:91.9580611079708   FPR@TPR95:0.24467718824980225   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:95.74933042462645   FPR@TPR95:0.09785224466311176   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:87.54712114601458   FPR@TPR95:3.4436869078012737   ..\..\Validation_Dataset\RoadObsticle21\images\*.webp
+(rba)
+
+    AUPRC score:86.29781460186787   FPR@TPR95:7.454548357283257   ..\..\Validation_Dataset\RoadAnomaly\images\*.jpg
+(rba)

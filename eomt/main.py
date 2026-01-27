@@ -152,7 +152,7 @@ class LightningCLI(cli.LightningCLI):
         )
 
     def fit(self, model, **kwargs):
-        if hasattr(self.trainer.logger.experiment, "log_code"):
+        if self.trainer.logger and hasattr(self.trainer.logger.experiment, "log_code"):
             is_gitignored = parse_gitignore(".gitignore")
             include_fn = lambda path: path.endswith(".py") or path.endswith(".yaml")
             self.trainer.logger.experiment.log_code(
@@ -183,7 +183,7 @@ def cli_main():
             "enable_checkpointing": True,
             "callbacks": [
                 ModelSummary(max_depth=3),
-                LearningRateMonitor(logging_interval="epoch"),
+                #LearningRateMonitor(logging_interval="epoch"),
                 
                 ModelCheckpoint(
                     filename="eomt-{epoch:02d}-{step}",

@@ -275,6 +275,15 @@ def main():
     logits_list = []
     ood_gts_list = []
 
+    '''
+    for path in glob.glob(os.path.expanduser(str(args.input[0]))):
+        print(path)
+        images = input_transform((Image.open(path).convert('RGB')))
+        images = (images*255).to(torch.uint8)
+        result = infer_semantic(images).unsqueeze(0).cpu()
+        plot_anomaly_results(images, logits_to_anomalyscores([result], rba_anomaly)[0])
+    '''
+
     for path in glob.glob(os.path.expanduser(str(args.input[0]))):
         print(path)
         images = input_transform((Image.open(path).convert('RGB')))
@@ -372,7 +381,7 @@ def main():
             else:
                 raise ValueError("Error: unknown --anomalyScore value")
             prc_auc, fpr = computeMetrics(anomaly_score_list, ood_mask, ind_mask)
-            logResults(file, prc_auc, fpr, '(' + description +')')
+            logResults(file, prc_auc, fpr, args.input[0] + '\n' + '(' + description +')')
 
             if args.save_res_dict:
                 res_dic[anomalyScore] = {"prc_auc": prc_auc, "fpr@95": fpr}

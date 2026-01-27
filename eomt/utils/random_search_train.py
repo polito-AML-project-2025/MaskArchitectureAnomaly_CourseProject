@@ -33,7 +33,7 @@ def get_newest_folder_name(parent_folder_path):
 
 def get_next_hyperparameters(history, n_candidates=50):
     
-    p_min, p_max = 0.01, 1.0
+    p_min, p_max = 1, 6
     a_min, a_max = 1.0, 10.0
     
     if not history:
@@ -85,15 +85,15 @@ else:
 print(f"Loaded {len(history)} existing runs.")
 
 
-n_new_points = 50
+n_new_points = 49
 
 for i in range(n_new_points):
     
     
-    p_odd, alpha = get_next_hyperparameters(history)
+    k, alpha = get_next_hyperparameters(history)
     
     print(f"\n--- Iteration {i+1}/{n_new_points} ---")
-    print(f"Chosen Params: p={p_odd:.4f}, alpha={alpha:.4f}")
+    print(f"Chosen Params: k={k:.4f}, alpha={alpha:.4f}")
 
 
     command = [
@@ -101,24 +101,26 @@ for i in range(n_new_points):
         "main.py", "fit",
         "-c", r".\configs\dinov2\cityscapes\semantic\eomt_base_640_cocomix.yaml",
         "--trainer.devices", "1",
-        "--trainer.max_epochs 1",
-        "--trainer.limit_val_batches 0",
+        "--trainer.max_epochs", "1",
+        "--trainer.limit_val_batches", "0",
         "--data.batch_size", "1",
         "--data.path", r"..\..\Validation_Dataset",
         "--data.init_args.ood_coco_root", r"..\..\Validation_Dataset\COCO", 
         "--model.init_args.lora_enabled", "True",
         "--model.init_args.modules_to_train", "['class_head', 'mask_head']",
         "--model.ckpt_path", r"..\..\epoch_106-step_19902_eomt.ckpt",
-        "--model.load_ckpt_class_head", "False",
+        "--model.load_ckpt_class_head", "True",
         "--model.network.masked_attn_enabled", "False",
-        "--data.init_args.ood_prob", str(p_odd),
-        "--model.init_args.rba_aplha", str(alpha) 
+        "--data.init_args.ood_prob", "1",
+        "--model.init_args.rba_aplha", str(alpha),
+        "--model.init_args.rba_coefficient", str(pow(10,-k)),
+        "--trainer.logger", "False"
     ]
     
     subprocess.run(command)
 
     last_folder = get_newest_folder_name(lora_path)
-    new_entry = (p_odd, alpha, last_folder, None)
+    new_entry = (k, alpha, last_folder, None)
     save_list_pickle(par_to_weights_path, [new_entry])
     
     history.append(new_entry)

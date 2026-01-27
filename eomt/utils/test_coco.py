@@ -18,7 +18,7 @@ CITYSCAPES_ROOT = "../../Validation_Dataset/"
 COCO_ROOT = "../../Validation_Dataset/COCO"              
 OOD_LABEL_ID = 254                  
 OOD_PROB = 1.0    
-NUM_EXAMPLES = 10
+NUM_EXAMPLES = 100
 
 
 CLASS_NAMES = {

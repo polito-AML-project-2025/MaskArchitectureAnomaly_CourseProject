@@ -10,6 +10,7 @@ trainer:
 model:
   class_path: training.mask_classification_semantic.MaskClassificationSemantic
   init_args:
+    rba_aplha: 9.5
     attn_mask_annealing_enabled: True
     attn_mask_annealing_start_steps: [3317, 8292, 13268]
     attn_mask_annealing_end_steps: [6634, 11609, 16585]
@@ -26,6 +27,6 @@ data:
   class_path: datasets.cityscapes_semantic.CityscapesSemantic
   init_args:
     train_with_ood_exposure: True
-    ood_prob: 0.5
+    ood_prob: 0.95
     ood_label_id: 254
     ood_n_sample: 2000
