@@ -1,5 +1,5 @@
 # EoMT Temperature Scaling Evaluation
-# Two-stage approach: 1) Save logits, 2) Apply different temperatures
+# Run inference and evaluate temperatures
 
 import os
 import glob
@@ -19,7 +19,6 @@ import importlib
 import warnings
 import json
 from datetime import datetime
-import pickle
 from peft import PeftModel
 
 seed = 42
@@ -57,8 +56,8 @@ def load_eomt_model(config_path, checkpoint_path, lora_weights=None, device='cud
         message=r".*Attribute 'network' is an instance of `nn\.Module` and is already saved during checkpointing.*",
     )
     
-    # Get image size from config
-    img_size = config["data"]["init_args"]["img_size"]
+    # Get image size - hardcoded as in evalEoMT.py
+    img_size = (1024, 1024)
     num_classes = 19  # Cityscapes has 19 classes
     
     # Load encoder
@@ -118,8 +117,10 @@ def infer_semantic_logits(model, img_tensor, img_size, device='cuda'):
     Returns per-pixel logits [num_classes, H, W]
     """
     with torch.no_grad(), autocast(dtype=torch.float16, device_type="cuda"):
-        imgs = [img_tensor.to(device)]
-        img_sizes = [img_tensor.shape[-2:]]
+        # Convert normalized float tensor [0, 1] to uint8 [0, 255] for PIL
+        img_uint8 = (img_tensor * 255).to(torch.uint8).to(device)
+        imgs = [img_uint8]
+        img_sizes = [img_uint8.shape[-2:]]
         
         # Use official window_imgs_semantic method
         crops, origins = model.window_imgs_semantic(imgs)
@@ -141,8 +142,25 @@ def infer_semantic_logits(model, img_tensor, img_size, device='cuda'):
     return logits[0].cpu().numpy()  # [num_classes, H, W]
 
 
-def save_logits(args):
-    """Stage 1: Run model once and save all logits"""
+def compute_msp_with_temperature(logits_np, temperature):
+    """
+    Compute MSP anomaly score with temperature scaling
+    Apply temperature on final pixel logits
+    """
+    logits = torch.from_numpy(logits_np).unsqueeze(0)  # [1, num_classes, H, W]
+    
+    # Apply temperature scaling on final logits
+    scaled_logits = logits / temperature
+    probs = torch.nn.functional.softmax(scaled_logits, dim=1)
+    
+    # MSP: 1 - max probability
+    anomaly_score = 1 - np.max(probs.squeeze(0).cpu().numpy(), axis=0)
+    
+    return anomaly_score
+
+
+def evaluate_single_stage(args):
+    """Single stage: Save logits and immediately evaluate with different temperatures"""
     
     device = 'cpu' if args.cpu else 'cuda'
     
@@ -152,7 +170,7 @@ def save_logits(args):
     logits_data = []
     
     print(f"\n{'='*60}")
-    print(f"Stage 1: Saving logits from EoMT model")
+    print(f"Running inference with EoMT model")
     print(f"{'='*60}\n")
     
     # Process each image
@@ -204,57 +222,16 @@ def save_logits(args):
         
         torch.cuda.empty_cache()
     
-    # Save logits
-    os.makedirs('saved_logits', exist_ok=True)
+    print(f"\nProcessed {len(logits_data)} images")
+    
+    # Evaluate with different temperatures
     dataset_name = os.path.basename(os.path.dirname(args.input))
-    save_path = f'saved_logits/eomt_{dataset_name}_logits.pkl'
-    
-    with open(save_path, 'wb') as f:
-        pickle.dump(logits_data, f)
-    
-    print(f"\nSaved {len(logits_data)} logits to: {save_path}")
-    print(f"{'='*60}\n")
-
-
-def compute_msp_with_temperature(logits_np, temperature):
-    """
-    Compute MSP anomaly score with temperature scaling
-    Apply temperature on final pixel logits
-    """
-    logits = torch.from_numpy(logits_np).unsqueeze(0)  # [1, num_classes, H, W]
-    
-    # Apply temperature scaling on final logits
-    scaled_logits = logits / temperature
-    probs = torch.nn.functional.softmax(scaled_logits, dim=1)
-    
-    # MSP: 1 - max probability
-    anomaly_score = 1 - np.max(probs.squeeze(0).cpu().numpy(), axis=0)
-    
-    return anomaly_score
-
-
-def evaluate_with_temperature(args):
-    """Stage 2: Load saved logits and apply different temperatures"""
-    
-    # Load saved logits
-    dataset_name = os.path.basename(os.path.dirname(args.input))
-    load_path = f'saved_logits/eomt_{dataset_name}_logits.pkl'
-    
-    if not os.path.exists(load_path):
-        print(f"Error: Logits file not found: {load_path}")
-        print("Please run with --save_logits first!")
-        return
-    
-    with open(load_path, 'rb') as f:
-        logits_data = pickle.load(f)
+    temperatures = args.temperatures if args.temperatures else [0.5, 0.75, 1.0, 1.1, 1.5, 2.0]
     
     print(f"\n{'='*60}")
-    print(f"Stage 2: Evaluating with different temperatures")
-    print(f"Loaded {len(logits_data)} samples from: {load_path}")
+    print(f"Evaluating with different temperatures")
+    print(f"Dataset: {dataset_name}")
     print(f"{'='*60}\n")
-    
-    # Test different temperatures
-    temperatures = args.temperatures if args.temperatures else [0.5, 0.75, 1.0, 1.1, 1.5, 2.0]
     
     results = []
     
@@ -318,6 +295,7 @@ def evaluate_with_temperature(args):
     
     with open('results_eomt_temp.txt', 'a') as f:
         f.write(f"\n\nDataset: {dataset_name}\n")
+        f.write(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"{'Temperature':<15} {'AUPRC (%)':<15} {'FPR95 (%)':<15}\n")
         f.write(f"{'-'*60}\n")
         for r in results:
@@ -365,16 +343,6 @@ def main():
         help="Path to EoMT config"
     )
     parser.add_argument(
-        '--save_logits',
-        action='store_true',
-        help='Stage 1: Save logits (run model once)'
-    )
-    parser.add_argument(
-        '--eval_temp',
-        action='store_true',
-        help='Stage 2: Evaluate with different temperatures (load saved logits)'
-    )
-    parser.add_argument(
         '--temperatures',
         type=float,
         nargs='+',
@@ -384,15 +352,8 @@ def main():
     
     args = parser.parse_args()
     
-    if args.save_logits:
-        save_logits(args)
-    elif args.eval_temp:
-        evaluate_with_temperature(args)
-    else:
-        print("Error: Please specify either --save_logits or --eval_temp")
-        print("\nUsage:")
-        print("  Stage 1 (save logits): python evalEoMT_T.py --input <path> --checkpoint <path> --save_logits")
-        print("  Stage 2 (eval temps):  python evalEoMT_T.py --input <path> --checkpoint <path> --eval_temp")
+    # Run single-stage evaluation
+    evaluate_single_stage(args)
 
 
 if __name__ == '__main__':
