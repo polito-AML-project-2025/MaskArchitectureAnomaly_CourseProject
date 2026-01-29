@@ -9,6 +9,6 @@ For instructions, please refer to the README in each folder:
 * [eomt](eomt) It is almost the original folder of the EoMT project. Inside it you will find code to train and pretrained checkpoints for EoMT.
 
 ## Results
-* All results tables are in Results_Table.pdf
+* All results tables are in Results_Tables.pdf
 
 
